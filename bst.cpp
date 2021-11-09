@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <cstddef>
+#include <assert.h>
+
 
 struct Node{
     int key;
@@ -110,74 +112,105 @@ class BST {
         
 
     public:
-        void insert(int key) {
+        bool verbose;
+        bool insert(int key) {
             /*
             Does NOT insert if dublicate key.
+            returns true if success, false if failure (duplicate key)
             */
+            //printf("insert is called for %i\n", key);
             Node* node = new Node;
             node->key = key;
             
             Node* curr = this->root;
-            Node* parent;
+            Node* parent = nullptr;
+
+            // printf("I bet you can see me\n");
+            // //printf("%i\n", parent->key);
+            // printf("But not me!\n");
             
+            // if(this->root) {
+            //     printf("The root exists\n");
+            // } else {
+            //     printf("The root dne\n");
+            // }
+
+            // if(curr) {
+            //     printf("curr exists\n");
+            // } else {
+            //     printf("curr dne\n");
+            // }
+
+
             while (curr) {
+                //printf("I am inside the while loop!\n");
                 parent = curr;
                 if(node->key < curr->key) {
                     curr = curr->left;
                 } else if(node->key > curr->key){
                     curr = curr->right;
                 } else {
-                    printf("The key already exists.\n");
-                    return;
+                    //printf("The key already exists.\n");
+                    return false;
                 }
             }
 
+            //printf("the key of the node being inserted: %i\n", node->key);
+
             node->parent = parent;
+            //printf("%i\n", parent->key);
             if(!parent) {
+                //printf("Yes, tree was empty!\n");
                 this->root = node; //Tree was empty
             } else if(node->key < parent->key) {
+                //printf("No, tree was not empty-1!\n");
                 parent->left = node;
             } else {
                 parent->right = node;
+                //printf("No, tree was not empty-2!\n");
             }
-            
+            return true;
         }
 
         void inorder(){
-            printf("Inorder traversal\n");
+            if (verbose) printf("Inorder traversal\n");
             inorderHelper(this->root);
             printf("\n");
         }
 
         void postorder(){
-            printf("Post-order traversal\n");
+            if (verbose) printf("Post-order traversal\n");
             postorderHelper(this->root);
             printf("\n");
         }
 
         void preorder() {
-            printf("Pre-order traversal\n");
+            if (verbose) printf("Pre-order traversal\n");
             preorderHelper(this->root);
             printf("\n");
         }
 
-        void search(int key) {
+        bool search(int key) {
             /*
-            Returns the pointer to the node whose key mathes the query.
+            Returns true if the key exists, false if not.
             */
             Node* ret = searchHelper(this->root, key);
             if (!ret) {
-                printf("The key does not exist in the tree.\n");
+                if(verbose) printf("The key does not exist in the tree.\n");
+                return false;
             } else {
-                printf("The key exists in the tree.\n");
+                if(verbose) printf("The key exists in the tree.\n");
+                return true;
             }
         }
 
         void min() {
             if(isEmpty()) {
-                printf("This tree contains no keys.\n");
+                if(verbose) printf("This tree contains no keys.\n");
+                //return ret;
             } else {
-                printf("Tree.min = %i\n", minHelper(this->root)->key);
+                if(verbose) printf("Tree.min = %i\n", minHelper(this->root)->key);
+                //return 0;
             }
         }
 
@@ -198,13 +231,19 @@ class BST {
             }
         }
 
+        void set_verbose(bool boolean) {
+            this->verbose = boolean;
+        }
+
         
 
 };
 
 int main(int argc, char* argv[]){
     BST tree;
-    tree.insert(1);
+    tree.set_verbose(true);
+    tree.min();
+    assert(tree.insert(1));
     tree.insert(2);
     tree.insert(3);
     tree.insert(4);
