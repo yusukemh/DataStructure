@@ -83,30 +83,31 @@ class BST {
         void insert(int key) {
             Node* node = new Node;
             node->key = key;
-
-            if(!this->root) {//root D.N.E. => set the new node as the root
-                this->root = node;
-            } else {//If the root exists, find the appropriate location
-                Node* parent;
-                Node* curr = this->root;
-                while (curr) {
-                    parent = curr;
-                    if(key < curr->key) {
-                        curr = curr->left;
-                    } else if (key > curr->key) {
-                        curr = curr->right;
-                    } else {
-                        printf("The key already exists.\n");
-                        break;
-                    }
-                }
-                node->parent = parent;
-                if(key < parent->key) {
-                    parent->left = node;
+            
+            Node* curr = this->root;
+            Node* parent;
+            
+            while (curr) {
+                parent = curr;
+                if(node->key < curr->key) {
+                    curr = curr->left;
+                } else if(node->key > curr->key){
+                    curr = curr->right;
                 } else {
-                    parent->right = node;
+                    printf("The key already exists.\n");
+                    return;
                 }
             }
+
+            node->parent = parent;
+            if(!parent) {
+                this->root = node; //Tree was empty
+            } else if(node->key < parent->key) {
+                parent->left = node;
+            } else {
+                parent->right = node;
+            }
+            
         }
 
         void inorder(){
