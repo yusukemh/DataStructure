@@ -118,56 +118,31 @@ class BST {
             Does NOT insert if dublicate key.
             returns true if success, false if failure (duplicate key)
             */
-            //printf("insert is called for %i\n", key);
+
             Node* node = new Node;
             node->key = key;
             
             Node* curr = this->root;
             Node* parent = nullptr;
 
-            // printf("I bet you can see me\n");
-            // //printf("%i\n", parent->key);
-            // printf("But not me!\n");
-            
-            // if(this->root) {
-            //     printf("The root exists\n");
-            // } else {
-            //     printf("The root dne\n");
-            // }
-
-            // if(curr) {
-            //     printf("curr exists\n");
-            // } else {
-            //     printf("curr dne\n");
-            // }
-
-
             while (curr) {
-                //printf("I am inside the while loop!\n");
                 parent = curr;
                 if(node->key < curr->key) {
                     curr = curr->left;
                 } else if(node->key > curr->key){
                     curr = curr->right;
                 } else {
-                    //printf("The key already exists.\n");
                     return false;
                 }
             }
 
-            //printf("the key of the node being inserted: %i\n", node->key);
-
             node->parent = parent;
-            //printf("%i\n", parent->key);
             if(!parent) {
-                //printf("Yes, tree was empty!\n");
                 this->root = node; //Tree was empty
             } else if(node->key < parent->key) {
-                //printf("No, tree was not empty-1!\n");
                 parent->left = node;
             } else {
                 parent->right = node;
-                //printf("No, tree was not empty-2!\n");
             }
             return true;
         }
@@ -261,31 +236,3 @@ int main(int argc, char* argv[]){
 
 
 
-
-
-/*
-struct Node{
-    int value;
-    struct Node* parent;
-    struct Node* left;
-    struct Node* right;
-};
-
-int main(int argc, char * argv[]) {
-    printf("Hello World\n");
-    struct Node node;
-    node.value = 1;
-
-    if(node.parent){
-        printf("hello");
-    }
-
-}
-
-struct BST{
-    struct Node root;
-
-    
-    
-};
-*/
