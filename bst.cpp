@@ -109,8 +109,24 @@ class BST {
             }
         }
 
+        void left_rotate_helper(Node* x){
+            Node* y = x->right;
+            x->right = y->left;
+            if (y->left) {
+                y->left->parent = x;
+            }
+            y->parent = x->parent;
+            if (!x->parent) {
+                this->root = y;
+            } else if (x == x->parent->left) {
+                x->parent->left = y;
+            } else {
+                x->parent->right = y;
+            }
+            y->left = x;
+            x->parent = y;
+        }
         
-
     public:
         bool verbose;
         bool insert(int key) {
@@ -182,10 +198,8 @@ class BST {
         void min() {
             if(isEmpty()) {
                 if(verbose) printf("This tree contains no keys.\n");
-                //return ret;
             } else {
                 if(verbose) printf("Tree.min = %i\n", minHelper(this->root)->key);
-                //return 0;
             }
         }
 
@@ -197,12 +211,14 @@ class BST {
             }
         }
 
-        void deleteKey(int key) {
+        bool deleteKey(int key) {
             Node* node = searchHelper(this->root, key);
             if(!node) {
-                printf("The key does not exist.\n");
+                if(verbose) printf("The key does not exist.\n");
+                return false;
             } else {
                 deleteKeyHelper(node);
+                return true;
             }
         }
 
@@ -210,13 +226,20 @@ class BST {
             this->verbose = boolean;
         }
 
+        void left_rotate(int key) {
+            Node* x = searchHelper(this->root, key);
+            left_rotate_helper(x);
+        }
+
+        
+
         
 
 };
 
 int main(int argc, char* argv[]){
     BST tree;
-    tree.set_verbose(true);
+    //tree.set_verbose(true);
     tree.min();
     assert(tree.insert(1));
     tree.insert(2);
@@ -227,11 +250,16 @@ int main(int argc, char* argv[]){
     tree.inorder();
     tree.postorder();
     tree.preorder();
-    tree.search(10);
-    tree.min();
-    tree.max();
-    tree.deleteKey(1);
+    //tree.search(10);
+    //tree.min();
+    //tree.max();
+    //tree.deleteKey(1);
+    //tree.inorder();
+    tree.left_rotate(2);
+    printf("After rotation\n");
     tree.inorder();
+    tree.postorder();
+    tree.preorder();
 }
 
 
