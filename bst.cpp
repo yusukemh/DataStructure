@@ -1,34 +1,6 @@
 #include <stdio.h>
 #include <cstddef>
 
-// class Node {
-//     private:
-//         int key;
-//         Node* parent;
-//         Node* left;
-//         Node* right;
-//     public:
-//         int get_key() {
-//             return this->key;
-//         }
-
-//         void set_key(int newKey) {
-//             this->key = newKey;
-//         }
-
-//         void set_parent(Node* newParent) {
-//             this->parent = newParent;
-//         }
-
-//         void set_left(Node* newLeft) {
-//             this->left = newLeft;
-//         }
-
-//         void set_right(Node *newRight) {
-//             this->right = newRight;
-//         }
-// };
-
 struct Node{
     int key;
     struct Node* parent;
@@ -41,23 +13,22 @@ class BST {
         Node* root;
 
         void inorderHelper(Node* curr) {
-            if(curr->left != NULL) {
+            if (curr != nullptr) {
                 inorderHelper(curr->left);
-            }
-            printf("%i", curr->key);
-            if(curr->right != NULL) {
+                printf("HEY:%i", curr->key);
                 inorderHelper(curr->right);
             }
         }
 
     public:
         void insert(int key) {
-            Node node;
-            node.key = key;
-            node.left = nullptr;
+            Node* node = new Node;
+            node->key = key;
+            node->left = nullptr;
 
-            if(this->root == NULL) {//if root does not exist
-                this->root = &node;
+            if(this->root == nullptr) {//if root does not exist
+                this->root = node;
+                printf("setting as root");
             } else {
                 //Node curr = root;
                 
@@ -65,11 +36,11 @@ class BST {
         }
 
         void inorder(){
-            //inorderHelper(this->root);
-            printf("%i", root->key);
-            if(root->left != nullptr){
+            if(this->root->left != nullptr){
                 printf("I have left child");
             }
+            //printf("%s", this->root->left);
+            inorderHelper(this->root);
         }
 
 };
