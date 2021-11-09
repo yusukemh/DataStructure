@@ -55,32 +55,65 @@ class BST {
             }
         }
 
-        Node* minHelper() {
+        Node* minHelper(Node* curr) {
             /*
-            Returns the pointer to the node with the smallest key
+            Returns the pointer to the node with the smallest key in the dubtree rooted at curr
             */
-            Node* curr = this->root;
             while(curr->left) {
                 curr = curr->left;
             }
             return curr;
         }
 
-        Node* maxHelper() {
+        Node* maxHelper(Node* curr) {
             /*
-            Returns the pointer to the node with the maximum key
+            Returns the pointer to the node with the maximum key in the subtree rooted at curr
             */
-            Node* curr = this->root;
             while(curr->right) {
                 curr = curr->right;
             }
             return curr;
         }
 
+        void transplant(Node* u, Node* v) {
+            if(!u->parent) {
+                this->root = v;//if u is the root
+            } else if(u == u->parent->left) {
+                u->parent->left = v;
+            } else {
+                u->parent->right = u;
+            }
+
+            if(!v) {
+                v->parent = u->parent;
+            }
+        }
+
+        void deleteKeyHelper(Node* z) {
+            if(!z->left) {
+                transplant(z, z->right);
+            } else if(!z->right) {
+                transplant(z, z->left);
+            } else {
+                Node* y = minHelper(z->right);
+                if (y->parent) {
+                    transplant(y, y->right);
+                    y->right = z->right;
+                    y->right->parent = y;
+                }
+                transplant(z, y);
+                y->left = z->left;
+                y->left->parent = y;
+            }
+        }
+
         
 
     public:
         void insert(int key) {
+            /*
+            Does NOT insert if dublicate key.
+            */
             Node* node = new Node;
             node->key = key;
             
@@ -144,7 +177,7 @@ class BST {
             if(isEmpty()) {
                 printf("This tree contains no keys.\n");
             } else {
-                printf("Tree.min = %i\n", minHelper()->key);
+                printf("Tree.min = %i\n", minHelper(this->root)->key);
             }
         }
 
@@ -152,9 +185,20 @@ class BST {
             if(isEmpty()) {
                 printf("This tree contains no keys.\n");
             } else {
-                printf("Tree.max = %i\n", maxHelper()->key);
+                printf("Tree.max = %i\n", maxHelper(this->root)->key);
             }
         }
+
+        void deleteKey(int key) {
+            Node* node = searchHelper(this->root, key);
+            if(!node) {
+                printf("The key does not exist.\n");
+            } else {
+                deleteKeyHelper(node);
+            }
+        }
+
+        
 
 };
 
@@ -172,6 +216,8 @@ int main(int argc, char* argv[]){
     tree.search(10);
     tree.min();
     tree.max();
+    tree.deleteKey(1);
+    tree.inorder();
 }
 
 
