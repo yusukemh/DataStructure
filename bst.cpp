@@ -13,10 +13,26 @@ class BST {
         Node* root;
 
         void inorderHelper(Node* curr) {
-            if (curr != nullptr) {
+            if (curr) {
                 inorderHelper(curr->left);
-                printf("HEY:%i", curr->key);
+                printf("%i ", curr->key);
                 inorderHelper(curr->right);
+            }
+        }
+
+        void preorderHelper(Node* curr) {
+            if (curr) {
+                printf("%i ", curr->key);
+                preorderHelper(curr->left);
+                preorderHelper(curr->right);
+            }
+        }
+
+        void postorderHelper(Node* curr) {
+            if (curr) {
+                postorderHelper(curr->left);
+                postorderHelper(curr->right);
+                printf("%i ", curr->key);
             }
         }
 
@@ -24,23 +40,48 @@ class BST {
         void insert(int key) {
             Node* node = new Node;
             node->key = key;
-            node->left = nullptr;
 
-            if(this->root == nullptr) {//if root does not exist
+            if(!this->root) {//root D.N.E. => set the new node as the root
                 this->root = node;
-                printf("setting as root");
-            } else {
-                //Node curr = root;
-                
+            } else {//If the root exists, find the appropriate location
+                Node* parent;
+                Node* curr = this->root;
+                while (curr) {
+                    parent = curr;
+                    if(key < curr->key) {
+                        curr = curr->left;
+                    } else if (key > curr->key) {
+                        curr = curr->right;
+                    } else {
+                        printf("The key already exists.\n");
+                        break;
+                    }
+                }
+                node->parent = parent;
+                if(key < parent->key) {
+                    parent->left = node;
+                } else {
+                    parent->right = node;
+                }
             }
         }
 
         void inorder(){
-            if(this->root->left != nullptr){
-                printf("I have left child");
-            }
-            //printf("%s", this->root->left);
+            printf("Inorder traversal\n");
             inorderHelper(this->root);
+            printf("\n");
+        }
+
+        void postorder(){
+            printf("Post-order traversal\n");
+            postorderHelper(this->root);
+            printf("\n");
+        }
+
+        void preorder() {
+            printf("Pre-order traversal\n");
+            preorderHelper(this->root);
+            printf("\n");
         }
 
 };
@@ -48,7 +89,12 @@ class BST {
 int main(int argc, char* argv[]){
     BST tree;
     tree.insert(1);
+    tree.insert(2);
+    tree.insert(3);
+    tree.insert(4);
     tree.inorder();
+    tree.postorder();
+    tree.preorder();
 }
 
 
