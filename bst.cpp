@@ -111,6 +111,7 @@ class BST {
 
         void left_rotate_helper(Node* x){
             Node* y = x->right;
+            if(!y) return;
             x->right = y->left;
             if (y->left) {
                 y->left->parent = x;
@@ -124,6 +125,25 @@ class BST {
                 x->parent->right = y;
             }
             y->left = x;
+            x->parent = y;
+        }
+
+        void right_rotate_helper(Node* x) {
+            Node* y = x-> left;
+            if(!y) return;
+            x->left = y->right;
+            if (y->right) {
+                y->right->parent = x;
+            }
+            y->parent = x->parent;
+            if(!x->parent) {
+                this->root = y;
+            } else if (x == x->parent->left) {
+                x->parent->left = y;
+            } else {
+                x->parent->right = y;
+            }
+            y->right = x;
             x->parent = y;
         }
         
@@ -227,8 +247,18 @@ class BST {
         }
 
         void left_rotate(int key) {
+            /*
+            Rotates the tree aound the node with the key.
+            Calls the private helper function after checking validity of the input.
+            */
             Node* x = searchHelper(this->root, key);
             left_rotate_helper(x);
+        }
+
+        void right_rotate(int key) {
+            Node* x = searchHelper(this->root, key);
+            right_rotate_helper(x);
+
         }
 
         
@@ -239,8 +269,8 @@ class BST {
 
 int main(int argc, char* argv[]){
     BST tree;
-    //tree.set_verbose(true);
-    tree.min();
+    tree.set_verbose(true);
+    //tree.min();
     assert(tree.insert(1));
     tree.insert(2);
     tree.insert(3);
@@ -260,6 +290,12 @@ int main(int argc, char* argv[]){
     tree.inorder();
     tree.postorder();
     tree.preorder();
+    printf("=============\n");
+    tree.right_rotate(2);
+    tree.inorder();
+    tree.postorder();
+    tree.preorder();
+
 }
 
 
