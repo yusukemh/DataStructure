@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <cstddef>
 #include <assert.h>
+#include <stdlib.h>
 
 
 struct Node{
@@ -271,30 +272,40 @@ int main(int argc, char* argv[]){
     BST tree;
     tree.set_verbose(true);
     //tree.min();
-    assert(tree.insert(1));
-    tree.insert(2);
-    tree.insert(3);
-    tree.insert(4);
-    tree.insert(10);
-    tree.insert(1);
-    tree.inorder();
-    tree.postorder();
-    tree.preorder();
+    // assert(tree.insert(1));
+    // tree.insert(2);
+    // tree.insert(3);
+    // tree.insert(4);
+    // tree.insert(10);
+    // tree.insert(1);
+    // tree.inorder();
+    // tree.postorder();
+    // tree.preorder();
     //tree.search(10);
     //tree.min();
     //tree.max();
     //tree.deleteKey(1);
     //tree.inorder();
-    tree.left_rotate(2);
-    printf("After rotation\n");
+    // tree.left_rotate(2);
+    // printf("After rotation\n");
+    // tree.inorder();
+    // tree.postorder();
+    // tree.preorder();
+    // printf("=============\n");
+    // tree.right_rotate(2);
+    // tree.inorder();
+    // tree.postorder();
+    // tree.preorder();
+
+    for (int i = 0; i < 10; i ++) {
+        int r = rand() % 100;
+        // printf("%i", r);
+        tree.insert(r);
+        printf("Inserting %i\n", r);
+    }
+    tree.preorder();
     tree.inorder();
     tree.postorder();
-    tree.preorder();
-    printf("=============\n");
-    tree.right_rotate(2);
-    tree.inorder();
-    tree.postorder();
-    tree.preorder();
 
 }
 
