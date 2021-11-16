@@ -321,8 +321,12 @@ int main(int argc, char* argv[]){
     tree.postorder();
     printf("height: %i\n", tree.height());
     tree.inspect(tree.root);
+    // printf("++++++++++++\n");
+    // tree.left_rotate(49);
+    // tree.inspect(tree.root);
+
     printf("++++++++++++\n");
-    tree.left_rotate(49);
+    tree.right_rotate(49);
     tree.inspect(tree.root);
 
 }
