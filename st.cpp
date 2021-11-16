@@ -53,10 +53,12 @@ class BST {
             }
 
             while(curr != this->root) {
+                //printf("Iamin\n");
                 curr = splay(curr);
-                printf("I am okay\n");
-                printf("%i\n", curr->key);
-                printf("%i, %i", curr->left->key, curr->right->key);
+                //break;
+                //printf("I am okay\n");
+                //printf("%i\n", curr->key);
+                //printf("%i, %i", curr->left->key, curr->right->key);
             }
             return curr;
         }
@@ -124,10 +126,10 @@ class BST {
         void left_rotate_helper(Node* x){
             Node* y = x->right;
             if(!y) {
-                printf("ME?\n");
+                //printf("ME?\n");
                 return;
             }
-            printf("not you buddy\n");
+            //printf("not you buddy\n");
             x->right = y->left;
             if (y->left) {
                 y->left->parent = x;
@@ -178,31 +180,45 @@ class BST {
         }
 
         Node* splay(Node* x){
+            //printf("inside splay\n");
+            if(!x->parent) {
+                //printf("parent dne\n");
+            }
+
+            if(!x->parent->parent) {
+                //printf("grant parent dne\n");
+            }
+
             if (x->parent == this->root) {// if the parent is the root
                 // zig
-                printf("ZIG\n");
+                //printf("ZIG\n");
                 if(x == x->parent->left) {
-                    right_rotate_helper(x);
+                    right_rotate_helper(x->parent);
                 } else {
                     //printf("right child\n");
-                    left_rotate_helper(x);
+                    left_rotate_helper(x->parent);
                     //printf("rotate completed\n");
                 }
-            } else if (x == x->parent->parent->left->right) {// if zig-zag (left, right)
+            } else if (x->parent->parent->left && x == x->parent->parent->left->right) {// if zig-zag (left, right)
                 // zig-zag
-                left_rotate_helper(x);
-                right_rotate_helper(x);
-            } else if (x == x->parent->parent->right->left) {// if zig-zag (right, left)
-                //zig-zag
-                right_rotate_helper(x);
-                left_rotate_helper(x);
-            } else if(x == x->parent->parent->left->left) {// if zig-zig (left, left)
-                right_rotate_helper(x->parent);
-                right_rotate_helper(x);
-            } else if(x == x->parent->parent->right->right) {// if zig-zig (right, right)
+                //printf("ZIG-ZAG-1\n");
                 left_rotate_helper(x->parent);
-                left_rotate_helper(x);
+                right_rotate_helper(x->parent);
+            } else if (x->parent->parent->right && x == x->parent->parent->right->left) {// if zig-zag (right, left)
+                //zig-zag
+                //printf("ZIG-ZAG-2\n");
+                right_rotate_helper(x->parent);
+                left_rotate_helper(x->parent);
+            } else if(x->parent->parent->left && x == x->parent->parent->left->left) {// if zig-zig (left, left)
+                //printf("ZIG-ZIG-1\n");
+                right_rotate_helper(x->parent->parent);
+                right_rotate_helper(x->parent);
+            } else if(x->parent->parent->right && x == x->parent->parent->right->right) {// if zig-zig (right, right)
+                //printf("ZIG-ZIG-2\n");
+                left_rotate_helper(x->parent->parent);
+                left_rotate_helper(x->parent);
             }
+            //printf("no match\n");
             // if(x) {
             //     printf("%i\n", x->key);
             // }
@@ -346,14 +362,9 @@ int main(int argc, char* argv[]){
     tree.preorder();
     tree.inorder();
     tree.postorder();
-    printf("============\n");
-    tree.right_rotate(49);
-    printf("!!!!!rotated!!!!!\n");
-    return 0;
-    tree.preorder();
-    tree.inorder();
-    tree.postorder();
     printf("height: %i\n", tree.height());
+    printf("============\n");
+    printf("search 49\n");
     tree.search(49);
     printf("height: %i\n", tree.height());
     printf("AFTER\n");

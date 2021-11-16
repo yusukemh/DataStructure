@@ -328,6 +328,8 @@ int main(int argc, char* argv[]){
     printf("++++++++++++\n");
     tree.right_rotate(49);
     tree.inspect(tree.root);
+    tree.left_rotate(7);
+    printf("%i\n", tree.root->key);
 
 }
 
