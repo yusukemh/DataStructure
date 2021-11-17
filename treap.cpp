@@ -5,15 +5,20 @@
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
 struct Node{
+    /***
+        structure for a Red-Black-Tree Node.
+        properties:
+    ***/
     int key;
+    int priority;
     struct Node* parent;
     struct Node* left;
     struct Node* right;
 };
 
-class SplayTree {
+class Treap {
     private:
-        Node* root;
+        //Node* root;
 
         void inorderHelper(Node* curr) {
             if (curr) {
@@ -39,26 +44,13 @@ class SplayTree {
             }
         }
 
-        Node* search_helper(Node* curr, int key) {
+        Node* searchHelper(Node* curr, int key) {
             while (curr && curr->key != key) {
                 if (key < curr->key) {
                     curr = curr->left;
                 } else {
                     curr = curr->right;
                 }
-            }
-
-            if(!curr) {
-                return curr;
-            }
-
-            while(curr != this->root) {
-                //printf("Iamin\n");
-                curr = splay(curr);
-                //break;
-                //printf("I am okay\n");
-                //printf("%i\n", curr->key);
-                //printf("%i, %i", curr->left->key, curr->right->key);
             }
             return curr;
         }
@@ -125,11 +117,7 @@ class SplayTree {
 
         void left_rotate_helper(Node* x){
             Node* y = x->right;
-            if(!y) {
-                //printf("ME?\n");
-                return;
-            }
-            //printf("not you buddy\n");
+            if(!y) return;
             x->right = y->left;
             if (y->left) {
                 y->left->parent = x;
@@ -178,40 +166,9 @@ class SplayTree {
             return MAX(left, right) + 1;
 
         }
-
-        Node* splay(Node* x){
-            if (x->parent == this->root) {// if the parent is the root
-                // zig
-                if(x == x->parent->left) {
-                    printf("zig-1\n");
-                    right_rotate_helper(x->parent);
-                } else {
-                    printf("zig-2\n");
-                    left_rotate_helper(x->parent);
-                }
-            } else if (x->parent->parent->left && x == x->parent->parent->left->right) {// if zig-zag (left, right)
-                // zig-zag
-                printf("zig-zag-1\n");
-                left_rotate_helper(x->parent);
-                right_rotate_helper(x->parent);
-            } else if (x->parent->parent->right && x == x->parent->parent->right->left) {// if zig-zag (right, left)
-                //zig-zag
-                printf("zig-zag-2\n");
-                right_rotate_helper(x->parent);
-                left_rotate_helper(x->parent);
-            } else if(x->parent->parent->left && x == x->parent->parent->left->left) {// if zig-zig (left, left)
-                printf("zig-zig-1\n");
-                right_rotate_helper(x->parent->parent);
-                right_rotate_helper(x->parent);
-            } else if(x->parent->parent->right && x == x->parent->parent->right->right) {// if zig-zig (right, right)
-                printf("zig-zig-2\n");
-                left_rotate_helper(x->parent->parent);
-                left_rotate_helper(x->parent);
-            }
-            return x;
-        }
         
     public:
+        Node* root;
         bool verbose;
         bool insert(int key) {
             /*
@@ -269,7 +226,7 @@ class SplayTree {
             /*
             Returns true if the key exists, false if not.
             */
-            Node* ret = search_helper(this->root, key);
+            Node* ret = searchHelper(this->root, key);
             if (!ret) {
                 if(verbose) printf("The key does not exist in the tree.\n");
                 return false;
@@ -296,7 +253,7 @@ class SplayTree {
         }
 
         bool deleteKey(int key) {
-            Node* node = search_helper(this->root, key);
+            Node* node = searchHelper(this->root, key);
             if(!node) {
                 if(verbose) printf("The key does not exist.\n");
                 return false;
@@ -315,17 +272,37 @@ class SplayTree {
             Rotates the tree aound the node with the key.
             Calls the private helper function after checking validity of the input.
             */
-            Node* x = search_helper(this->root, key);
+            Node* x = searchHelper(this->root, key);
             left_rotate_helper(x);
         }
 
         void right_rotate(int key) {
-            Node* x = search_helper(this->root, key);
+            Node* x = searchHelper(this->root, key);
             right_rotate_helper(x);
+
         }
 
         int height() {
             return height_helper(this->root) - 1;
+        }
+
+        void inspect(Node* x) {
+            if(x) {
+                inspect(x->left);
+                printf("key: %i ", x->key);
+                if(x->left) {
+                    printf("left: %i ", x->left->key);
+                } else {
+                    printf("left: none ");
+                }
+                if(x->right) {
+                    printf("right: %i ", x->right->key);
+                } else {
+                    printf("right: none");
+                }
+                printf("\n");
+                inspect(x->right);
+            }
         }
 
         
@@ -335,70 +312,29 @@ class SplayTree {
 };
 
 int main(int argc, char* argv[]){
-    SplayTree tree;
+    Treap tree;
     tree.set_verbose(true);
 
     for (int i = 0; i < 10; i ++) {
-        //int r = rand() % 100;
-        int r = i;
+        int r = rand() % 100;
+        // printf("%i", r);
         tree.insert(r);
         printf("Inserting %i\n", r);
     }
-    printf("BEFORE\n");
     tree.preorder();
     tree.inorder();
     tree.postorder();
     printf("height: %i\n", tree.height());
-    printf("============\n");
-    printf("search 7\n");
-    tree.search(7);
-    printf("height: %i\n", tree.height());
-    tree.preorder();
-    printf("============\n");
+    tree.inspect(tree.root);
+    // printf("++++++++++++\n");
+    // tree.left_rotate(49);
+    // tree.inspect(tree.root);
 
-
-    return 0;
-    printf("search 58\n");
-    tree.search(58);
-    printf("height: %i\n", tree.height());
-    tree.preorder();
-    printf("============\n");
-    return 0;
-    printf("search 7\n");
-    tree.search(7);
-    printf("height: %i\n", tree.height());
-    tree.preorder();
-    printf("============\n");
-
-    printf("search 72\n");
-    tree.search(72);
-    printf("height: %i\n", tree.height());
-    tree.preorder();
-    printf("============\n");
-
-    printf("search 72\n");
-    tree.search(72);
-    printf("height: %i\n", tree.height());
-    tree.preorder();
-    printf("============\n");
-
-    printf("search 44\n");
-    tree.search(44);
-    printf("height: %i\n", tree.height());
-    tree.preorder();
-    printf("============\n");
-
-    printf("search 7\n");
-    tree.search(7);
-    printf("height: %i\n", tree.height());
-    tree.preorder();
-
-    printf("============\n");
-    printf("search 7\n");
-    tree.search(7);
-    printf("height: %i\n", tree.height());
-    tree.preorder();
-    printf("============\n");
+    printf("++++++++++++\n");
+    tree.right_rotate(49);
+    tree.inspect(tree.root);
+    tree.left_rotate(7);
+    printf("%i\n", tree.root->key);
 
 }
 
