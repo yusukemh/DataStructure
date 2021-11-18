@@ -3,6 +3,12 @@
 #include <assert.h>
 #include <stdlib.h>
 #define MAX(a,b) (((a)>(b))?(a):(b))
+/*
+TODO
+fix insert
+implement checker function for rbt property
+implement delete
+*/
 
 struct Node{
     int key;

@@ -5,6 +5,13 @@
 #include <time.h>
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
+/*
+TODO
+implement insert
+implement decrease-key
+implement delete
+*/
+
 struct Node{
     /***
         structure for a Red-Black-Tree Node.
@@ -116,9 +123,13 @@ class Treap {
             }
         }
 
-        void left_rotate_helper(Node* x){
+        Node* left_rotate_helper(Node* x){
+            /*return the pointer to the node closer to the root*/
             Node* y = x->right;
-            if(!y) return;
+            if(!y){
+                printf("You are not supposed to call left_rotate\n");
+                return nullptr;
+            }
             x->right = y->left;
             if (y->left) {
                 y->left->parent = x;
@@ -133,11 +144,16 @@ class Treap {
             }
             y->left = x;
             x->parent = y;
+            return y;
         }
 
-        void right_rotate_helper(Node* x) {
+        Node* right_rotate_helper(Node* x) {
+            /*return the pointer to the node closer to the root*/
             Node* y = x-> left;
-            if(!y) return;
+            if(!y){
+                printf("You are not supposed to call left_rotate\n");
+                return nullptr;
+            }
             x->left = y->right;
             if (y->right) {
                 y->right->parent = x;
@@ -152,6 +168,7 @@ class Treap {
             }
             y->right = x;
             x->parent = y;
+            return y;
         }
 
         int height_helper(Node* x) {
@@ -179,6 +196,8 @@ class Treap {
 
             Node* node = new Node;
             node->key = key;
+            node->priority = rand();
+            printf("priority: %i\n", node->priority);
             
             Node* curr = this->root;
             Node* parent = nullptr;
@@ -202,6 +221,20 @@ class Treap {
             } else {
                 parent->right = node;
             }
+
+            /*
+            fix the tree to maintian the heap property, using priority
+            */
+            while(node->parent && node->priority < node->parent->priority){
+                if(node == node->parent->right){// if I am the right child
+                    node = left_rotate_helper(node->parent);
+                } else if (node == node->parent->left){// if I am the left child
+                    node = right_rotate_helper(node->parent);
+                } else {
+                    printf("something is wrong");
+                }
+            }
+
             return true;
         }
 
@@ -289,15 +322,19 @@ class Treap {
 
         void inspect(Node* x) {
             if(x) {
+                if(x==this->root) {
+                    printf("root key: %i\n", x->key);
+                }
                 inspect(x->left);
-                printf("key: %i ", x->key);
+                printf("key: %3i ", x->key);
+                printf("priority: %10i ", int(x->priority/100000));
                 if(x->left) {
-                    printf("left: %i ", x->left->key);
+                    printf("left: %4i ", x->left->key);
                 } else {
                     printf("left: none ");
                 }
                 if(x->right) {
-                    printf("right: %i ", x->right->key);
+                    printf("right: %4i ", x->right->key);
                 } else {
                     printf("right: none");
                 }
@@ -306,6 +343,28 @@ class Treap {
             }
         }
 
+        bool assert_tree(Node* x) {
+            /*
+            Make sure the tree property is maintained in every node
+            */
+            if(x) {
+                // check left subtree
+                if(!assert_tree(x->left)) return false;
+                // check left child
+                if (x->left) {
+                    if (x->key < x->left->key) return false;
+                    if (x->priority > x->left->priority) return false;
+                }
+                // check right child
+                if (x->right) {
+                    if (x->key > x->right->key) return false;
+                    if (x->priority > x->right->priority) return false;
+                }
+                // check right subtree
+                if (!assert_tree(x->right)) return false;
+            }
+            return true;
+        }
         
 
         
@@ -315,20 +374,16 @@ class Treap {
 int main(int argc, char* argv[]){
     Treap tree;
     srand (time(NULL));
-    printf("%i\n", RAND_MAX);
     tree.set_verbose(true);
-    int r = rand();
-    printf("%i\n", r);
-    for (int i = 0; i < 100; i++) {
-        printf("%i\n", rand());
-    }
 
-    // for (int i = 0; i < 10; i ++) {
-    //     int r = rand() % 100;
-    //     // printf("%i", r);
-    //     tree.insert(r);
-    //     printf("Inserting %i\n", r);
-    // }
+    for (int i = 0; i < 1000; i ++) {
+        int r = rand() % 10000;
+        // printf("%i", r);
+        tree.insert(r);
+        printf("Inserting %i\n", r);
+    }
+    printf("=========\n");
+    tree.inspect(tree.root);
     // tree.preorder();
     // tree.inorder();
     // tree.postorder();
@@ -343,6 +398,7 @@ int main(int argc, char* argv[]){
     // tree.inspect(tree.root);
     // tree.left_rotate(7);
     // printf("%i\n", tree.root->key);
+    assert(tree.assert_tree(tree.root));
 
 }
 
