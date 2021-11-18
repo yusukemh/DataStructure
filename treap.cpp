@@ -10,6 +10,7 @@ TODO
 implement insert
 implement decrease-key
 implement delete
+documentation
 */
 
 struct Node{
@@ -25,6 +26,10 @@ struct Node{
 };
 
 class Treap {
+    /***
+    the priority is represented by strictly negative number.
+    0 therefore indicates infinite priority (least prioritized)
+    ***/
     private:
         //Node* root;
 
@@ -106,21 +111,13 @@ class Treap {
         }
 
         void deleteKeyHelper(Node* z) {
-            if(!z->left) {
-                transplant(z, z->right);
-            } else if(!z->right) {
-                transplant(z, z->left);
+            z = increase_priority(z);
+            if(z == z->parent->left){
+                z->parent->left = nullptr;
             } else {
-                Node* y = minHelper(z->right);
-                if (y->parent) {
-                    transplant(y, y->right);
-                    y->right = z->right;
-                    y->right->parent = y;
-                }
-                transplant(z, y);
-                y->left = z->left;
-                y->left->parent = y;
+                z->parent->right = nullptr;
             }
+            delete(z);
         }
 
         Node* left_rotate_helper(Node* x){
@@ -184,6 +181,29 @@ class Treap {
             return MAX(left, right) + 1;
 
         }
+
+        Node* increase_priority(Node* x) {
+            /***
+            Increases node x's priority to 0 (lowest priority)
+            so that x becomes a leaf node.
+            Returns the pointer to x
+            ***/
+            x->priority = 0;
+            while(x->left || x->right) {
+                if(!x->left) {//if only right child exists
+                    left_rotate_helper(x);
+                } else if (!x->right) {//if only left child exists
+                    right_rotate_helper(x);
+                } else {//if both child exists
+                    if(x->left->priority < x->right->priority) {
+                        right_rotate_helper(x);
+                    } else {
+                        left_rotate_helper(x);
+                    }
+                }
+            }
+            return x;
+        }
         
     public:
         Node* root;
@@ -196,8 +216,8 @@ class Treap {
 
             Node* node = new Node;
             node->key = key;
-            node->priority = rand();
-            printf("priority: %i\n", node->priority);
+            node->priority = - (rand() + 1);//shift by one to make sure 0 never occurs
+            //printf("priority: %i\n", node->priority);
             
             Node* curr = this->root;
             Node* parent = nullptr;
@@ -365,19 +385,15 @@ class Treap {
             }
             return true;
         }
-        
-
-        
-
 };
 
 int main(int argc, char* argv[]){
     Treap tree;
-    srand (time(NULL));
+    //srand (time(NULL));
     tree.set_verbose(true);
 
-    for (int i = 0; i < 1000; i ++) {
-        int r = rand() % 10000;
+    for (int i = 0; i < 10; i ++) {
+        int r = rand() % 100;
         // printf("%i", r);
         tree.insert(r);
         printf("Inserting %i\n", r);
@@ -399,6 +415,10 @@ int main(int argc, char* argv[]){
     // tree.left_rotate(7);
     // printf("%i\n", tree.root->key);
     assert(tree.assert_tree(tree.root));
+    printf("height: %i\n", tree.height());
+    tree.deleteKey(23);
+    printf("After deletion\n");
+    tree.inspect(tree.root);
 
 }
 
