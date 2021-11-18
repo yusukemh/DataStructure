@@ -7,9 +7,7 @@
 
 /*
 TODO
-implement insert
-implement decrease-key
-implement delete
+test
 documentation
 */
 
@@ -285,7 +283,7 @@ class Treap {
                 if(verbose) printf("The key does not exist in the tree.\n");
                 return false;
             } else {
-                if(verbose) printf("The key exists in the tree.\n");
+                if(verbose) printf("The key %i exists in the tree.\n", key);
                 return true;
             }
         }
@@ -344,6 +342,7 @@ class Treap {
             if(x) {
                 if(x==this->root) {
                     printf("root key: %i\n", x->key);
+                    printf("height: %i\n", this->height());
                 }
                 inspect(x->left);
                 printf("key: %3i ", x->key);
@@ -419,6 +418,7 @@ int main(int argc, char* argv[]){
     tree.deleteKey(23);
     printf("After deletion\n");
     tree.inspect(tree.root);
+    tree.search(7);
 
 }
 
