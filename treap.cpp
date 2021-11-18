@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <assert.h>
 #include <stdlib.h>
+#include <time.h>
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
 struct Node{
@@ -313,28 +314,35 @@ class Treap {
 
 int main(int argc, char* argv[]){
     Treap tree;
+    srand (time(NULL));
+    printf("%i\n", RAND_MAX);
     tree.set_verbose(true);
-
-    for (int i = 0; i < 10; i ++) {
-        int r = rand() % 100;
-        // printf("%i", r);
-        tree.insert(r);
-        printf("Inserting %i\n", r);
+    int r = rand();
+    printf("%i\n", r);
+    for (int i = 0; i < 100; i++) {
+        printf("%i\n", rand());
     }
-    tree.preorder();
-    tree.inorder();
-    tree.postorder();
-    printf("height: %i\n", tree.height());
-    tree.inspect(tree.root);
-    // printf("++++++++++++\n");
-    // tree.left_rotate(49);
-    // tree.inspect(tree.root);
 
-    printf("++++++++++++\n");
-    tree.right_rotate(49);
-    tree.inspect(tree.root);
-    tree.left_rotate(7);
-    printf("%i\n", tree.root->key);
+    // for (int i = 0; i < 10; i ++) {
+    //     int r = rand() % 100;
+    //     // printf("%i", r);
+    //     tree.insert(r);
+    //     printf("Inserting %i\n", r);
+    // }
+    // tree.preorder();
+    // tree.inorder();
+    // tree.postorder();
+    // printf("height: %i\n", tree.height());
+    // tree.inspect(tree.root);
+    // // printf("++++++++++++\n");
+    // // tree.left_rotate(49);
+    // // tree.inspect(tree.root);
+
+    // printf("++++++++++++\n");
+    // tree.right_rotate(49);
+    // tree.inspect(tree.root);
+    // tree.left_rotate(7);
+    // printf("%i\n", tree.root->key);
 
 }
 

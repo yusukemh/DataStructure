@@ -338,10 +338,17 @@ int main(int argc, char* argv[]){
     SplayTree tree;
     tree.set_verbose(true);
 
-    for (int i = 0; i < 10; i ++) {
+    for (int i = 0; i < 1000; i ++) {
+        int r = rand() % 1000000;
+        //int r = i;
+        tree.insert(r);
+        printf("Inserting %i\n", r);
+    }
+
+    for (int i = 0; i < 10000; i ++) {
         //int r = rand() % 100;
         int r = i;
-        tree.insert(r);
+        tree.search(r);
         printf("Inserting %i\n", r);
     }
     printf("BEFORE\n");
@@ -356,22 +363,14 @@ int main(int argc, char* argv[]){
     tree.preorder();
     printf("============\n");
 
-
-    return 0;
     printf("search 58\n");
     tree.search(58);
     printf("height: %i\n", tree.height());
     tree.preorder();
     printf("============\n");
-    return 0;
+
     printf("search 7\n");
     tree.search(7);
-    printf("height: %i\n", tree.height());
-    tree.preorder();
-    printf("============\n");
-
-    printf("search 72\n");
-    tree.search(72);
     printf("height: %i\n", tree.height());
     tree.preorder();
     printf("============\n");
@@ -392,13 +391,6 @@ int main(int argc, char* argv[]){
     tree.search(7);
     printf("height: %i\n", tree.height());
     tree.preorder();
-
-    printf("============\n");
-    printf("search 7\n");
-    tree.search(7);
-    printf("height: %i\n", tree.height());
-    tree.preorder();
-    printf("============\n");
 
 }
 

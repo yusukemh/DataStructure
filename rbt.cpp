@@ -140,7 +140,7 @@ class RBT {
             Node* y = x-> left;
             if(y != TNIL) return;
             x->left = y->right;
-            if (y->right) {
+            if (y->right != TNIL) {
                 y->right->parent = x;
             }
             y->parent = x->parent;
@@ -220,17 +220,16 @@ class RBT {
             z->right = TNIL;
             z->color = 1;
             
+            /*
             if (z->parent == TNIL) {
                 //if the new node is the root, then no need fix
-                //printf("I am the root\n");
                 return true;
             }
             if (z->parent->parent == TNIL) {
-                //printf("My parent is the root\n");
                 //if the new node is the direct child of the root, then no need fix
                 return true;
-            }
-            //printf("I need fix-up\n");
+            }*/
+            printf("I need fix up\n");
             insert_fixup(z);
             return true;
         }
@@ -239,19 +238,8 @@ class RBT {
             // for any function call to this function, 
             // z->parent->parent exists and != TNIL
             Node* y;
-            /*
-            if(z->parent) {
-                printf("parent exists\n");
-            }
-            if(z->parent->color) {
-                printf("parent exists with color %i\n", z->parent->color);
-            }
-            */
-            //printf("\n\n\n%i\n\n\n", z->key);
             while(z->parent->color == 1) {
-                //printf("inside the while loop\n");
                 if(z->parent == z->parent->parent->left){
-                    //printf("Case A\n");
                     y = z->parent->parent->right;
                     if(y->color == 1) {
                         z->parent->color = 0;
@@ -267,45 +255,25 @@ class RBT {
                         z->parent->parent->color = 1;
                         right_rotate_helper(z->parent->parent);
                     }
-                } else {
-                    //printf("Case B\n");
+                } else if(z->parent == z->parent->parent->right){
                     y = z->parent->parent->left;
                     if(y->color == 1) {
-                        //printf("Case B-1\n");
                         z->parent->color = 0;
                         y->color = 0;
                         z->parent->parent->color = 1;
                         z = z->parent->parent;
                     } else {
-                        //printf("Case B-2\n");
                         if (z == z->parent->left) {
-                            //printf("Case B-2-a\n");
                             z = z->parent;
                             right_rotate_helper(z);
-                            //printf("completed rotation-1\n");
                         }
                         z->parent->color = 0;
                         z->parent->parent->color = 1;
-                        //inspect_node(z);
                         left_rotate_helper(z->parent->parent);
-                        //printf("completed rotation-2\n");
                     }
-                }
-                /*
-                if(z->parent->color){
-                    printf("the parent's color is %i\n", z->parent->color);
-                }
-                if(z->parent->parent->left) {
-                    printf("bet you can't see mee\n");
-                }
-                if (z->parent == TNIL) {
-                    printf("break the loop\n");
-                    break;
                 } else {
-                    this->inspect(this->root);
-                    //printf("parent's key: %i\n", z->parent->key);
+                    printf("SOMETHING IS UPPPPPPPPPPPPPPPPPPPPPP\n");
                 }
-                */
             }
             this->root->color = 0;
         }
@@ -441,6 +409,21 @@ class RBT {
                 }
             }
             printf("==============\n");
+        }
+
+        bool check_rbt_property(Node* x) {
+            /***
+            Check if the following two properties are preserved:
+            i) if node is red, then both its children are black
+            ii) the # of black nodes from any node to its descendant leaves are equal
+            ***/
+
+            //bool condition_i =  check_color_condition(this->root);
+            //bool condition_ii = check_black_node_condition(this->root);
+            
+            //return condition_i && condition_ii;
+            return true;
+
         }
 
         
