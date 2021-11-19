@@ -121,7 +121,7 @@ class RBT {
 
         void left_rotate_helper(Node* x){
             Node* y = x->right;            
-            if(!y) return;
+            if(y == TNIL) return;
             x->right = y->left;
         
 
@@ -144,7 +144,7 @@ class RBT {
 
         void right_rotate_helper(Node* x) {
             Node* y = x-> left;
-            if(y != TNIL) return;
+            if(y == TNIL) return;
             x->left = y->right;
             if (y->right != TNIL) {
                 y->right->parent = x;
@@ -183,6 +183,8 @@ class RBT {
         RBT(){
             TNIL = new Node;
             TNIL->color = 0;//all leaf nodes are black
+            TNIL->right = nullptr;
+            TNIL->left = nullptr;
             root = TNIL;
         }
         bool insert(int key) {
@@ -225,17 +227,7 @@ class RBT {
             z->left = TNIL;
             z->right = TNIL;
             z->color = 1;
-            
-            /*
-            if (z->parent == TNIL) {
-                //if the new node is the root, then no need fix
-                return true;
-            }
-            if (z->parent->parent == TNIL) {
-                //if the new node is the direct child of the root, then no need fix
-                return true;
-            }*/
-            printf("I need fix up\n");
+
             insert_fixup(z);
             return true;
         }
@@ -277,8 +269,7 @@ class RBT {
                         z->parent->parent->color = 1;
                         left_rotate_helper(z->parent->parent);
                     }
-                } else {
-                    printf("SOMETHING IS UPPPPPPPPPPPPPPPPPPPPPP\n");
+                } else {    
                 }
             }
             this->root->color = 0;
@@ -369,8 +360,12 @@ class RBT {
         void inspect(Node* x) {
             /*inspect the tree in in-order manner*/
             if(x) {
+                if(x==this->root) {
+                    printf("root key: %i\n", x->key);
+                    printf("height: %i\n", this->height());
+                }
                 if(x == TNIL) {
-                    printf("TNIL\n");
+                    //printf("TNIL\n");
                     return;
                 }
                 inspect(x->left);
@@ -386,6 +381,12 @@ class RBT {
                     printf("right: TNIL");
                 } else {
                     printf("right: %i ", x->right->key);
+                }
+                if(x != TNIL) {
+                    //printf("parents color %i ",x->parent->color);
+                }
+                if(x->parent == TNIL) {
+                    //printf("I HAVE TNIL AS PARENT\n");
                 }
                 
                 printf("\n");
@@ -417,57 +418,60 @@ class RBT {
             printf("==============\n");
         }
 
-        bool check_rbt_property(Node* x) {
+        bool assert_tree(Node* x) {
             /***
             Check if the following two properties are preserved:
             i) if node is red, then both its children are black
             ii) the # of black nodes from any node to its descendant leaves are equal
             ***/
 
-            //bool condition_i =  check_color_condition(this->root);
-            //bool condition_ii = check_black_node_condition(this->root);
-            
-            //return condition_i && condition_ii;
+            //check the color property
+            if(x == TNIL || x == this->root) {//TNIL and root has to be black
+                if (x->color != 0) {
+                    return false;
+                }
+            } else {//if x is red, then both children have to be black
+                if (x->right->color != 0) {
+                    return false;
+                } else if (x->left->color != 0) {
+                    return false;
+                }
+            }
+
+            if(count_black_node(x->left) != count_black_node(x->right)) {
+                return false;
+            }
             return true;
-
         }
-
         
+        int count_black_node(Node* x) {
+            if (x == TNIL){return 1;}
 
-        
+            int left = count_black_node(x->left);
+            int right = count_black_node(x->right);
+            int ret = x->color == 0 ? 1 : 0;
 
+            if (left == -1 || right == -1 || left != right){
+                return -1; 
+            } else {
+                return left + ret;
+            }
+        }
 };
 
 int main(int argc, char* argv[]){
     RBT tree;
     tree.set_verbose(true);
 
-    for (int i = 0; i < 10; i ++) {
-        int r = rand() % 100;
-        // printf("%i", r);
+    for (int i = 0; i < 1000; i ++) {
+        int r = rand() % 100000;
         printf("Inserting %i\n", r);
         tree.insert(r);
+        assert(tree.assert_tree(tree.root));
     }
-    tree.preorder();
-    tree.inorder();
-    tree.postorder();
+
     printf("height: %i\n", tree.height());
     tree.inspect(tree.root);
-
-    if (tree.root->parent == tree.TNIL) {
-        printf("The root's parent is TNIL\n");
-    }
-
-    // printf("++++++++++++\n");
-    // tree.left_rotate(49);
-    // tree.inspect(tree.root);
-
-    //printf("++++++++++++\n");
-    //tree.right_rotate(49);
-    //tree.inspect(tree.root);
-    //tree.left_rotate(7);
-    //printf("root: %i\n", tree.root->key);
-
 }
 
 

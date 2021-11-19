@@ -53,12 +53,7 @@ class SplayTree {
             }
 
             while(curr != this->root) {
-                //printf("Iamin\n");
                 curr = splay(curr);
-                //break;
-                //printf("I am okay\n");
-                //printf("%i\n", curr->key);
-                //printf("%i, %i", curr->left->key, curr->right->key);
             }
             return curr;
         }

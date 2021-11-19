@@ -390,6 +390,7 @@ int main(int argc, char* argv[]){
     Treap tree;
     //srand (time(NULL));
     tree.set_verbose(true);
+    printf("%i\n", RAND_MAX);
 
     for (int i = 0; i < 10; i ++) {
         int r = rand() % 100;
