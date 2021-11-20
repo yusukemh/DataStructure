@@ -1,3 +1,8 @@
+/***
+ICS621 Final Project
+Fall 2021
+Reference: CLRS, 2009
+***/
 #include <stdio.h>
 #include <cstddef>
 #include <assert.h>
@@ -16,18 +21,18 @@ class RBT {
     private:
         void inorder_aux(Node* x) {
             /***
-            Performs inorder traversal from the input node
+            Performs inorder traversal from [Node* x]
             ***/
             if (x) {
                 inorder_aux(x->left);
-                printf("%i->", x->key);
+                printf("%i ", x->key);
                 inorder_aux(x->right);
             }
         }
 
         void preorder_aux(Node* x) {
             /***
-            Performs preorder traversal from the input node
+            Performs preorder traversal from [Node* x]
             ***/
             if (x) {
                 printf("%i ", x->key);
@@ -38,7 +43,7 @@ class RBT {
 
         void postorder_aux(Node* x) {
             /***
-            Performs postorder traversal from the input node
+            Performs postorder traversal from [Node* x]
             ***/
             if (x) {
                 postorder_aux(x->left);
@@ -50,7 +55,6 @@ class RBT {
         Node* search_aux(Node* x, int key) {
             /***
             Performs search on [int key] in the subtree rooted at [Node* x].
-            Returns nulptr if
             ***/
             while (x && x->key != key) {
                 if (key < x->key) {
@@ -63,6 +67,9 @@ class RBT {
         }
 
         bool is_empty() {
+            /***
+            Returns true if the tree is empty, false otherwise
+            ***/
             if(this->root == TNIL) {
                 return true;
             } else {
@@ -70,27 +77,30 @@ class RBT {
             }
         }
 
-        Node* minHelper(Node* curr) {
-            /*
-            Returns the pointer to the node with the smallest key in the subtree rooted at curr
-            */
-            while(curr->left != TNIL) {
-                curr = curr->left;
+        Node* min_aux(Node* x) {
+            /***
+            Returns the pointer to the node with the smallest key in the subtree rooted at [Node* x]
+            ***/
+            while(x->left != TNIL) {
+                x = x->left;
             }
-            return curr;
+            return x;
         }
 
-        Node* maxHelper(Node* curr) {
-            /*
-            Returns the pointer to the node with the maximum key in the subtree rooted at curr
-            */
-            while(curr->right) {
-                curr = curr->right;
+        Node* max_aux(Node* x) {
+            /***
+            Returns the pointer to the node with the maximum key in the subtree rooted at [Node* x]
+            ***/
+            while(x->right) {
+                x = x->right;
             }
-            return curr;
+            return x;
         }
 
         void transplant(Node* u, Node* v) {
+            /***
+            Transplant the subtree rooted at [Node* v] in the replace of [Node* u]
+            ***/
             if(u->parent == TNIL) {//if u is the root
                 this->root = v;
             } else if(u == u->parent->left) {
@@ -101,7 +111,10 @@ class RBT {
             v->parent = u->parent;
         }
 
-        void deleteKeyHelper(Node* z) {
+        void delete_key_aux(Node* z) {
+            /***
+            Performs deletion of node [Node* z]
+            ***/
             Node* x;
             Node* y = z;
             int y_original_color = y->color;
@@ -112,7 +125,7 @@ class RBT {
                 x = z->left;
                 transplant(z, z->left);
             } else {
-                y = minHelper(z->right);
+                y = min_aux(z->right);
                 y_original_color = y->color;
                 x = y->right;
                 if(y->parent == z) {
@@ -134,6 +147,9 @@ class RBT {
         }
 
         void delete_fixup(Node* x) {
+            /***
+            Performs set of operations to restore RB property after deletion of a node.
+            ***/
             while(x != this->root && x->color == 0) {
                 Node* w;
                 if(x == x->parent->left) {
@@ -141,7 +157,7 @@ class RBT {
                     if(w->color == 1) {
                         w->color = 0;
                         x->parent->color = 1;
-                        left_rotate_helper(x->parent);
+                        left_rotate_aux(x->parent);
                         w = x->parent->right;
                     }
                     if(w->left->color == 0 && w->right->color == 0) {
@@ -151,13 +167,13 @@ class RBT {
                         if(w->right->color == 0) {
                             w->left->color = 0;
                             w->color = 1;
-                            right_rotate_helper(w);
+                            right_rotate_aux(w);
                             w = x->parent->right;
                         }
                         w->color = x->parent->color;
                         x->parent->color = 0;
                         w->right->color = 0;
-                        left_rotate_helper(x->parent);
+                        left_rotate_aux(x->parent);
                         x = this->root;
                     }
                 } else {
@@ -165,7 +181,7 @@ class RBT {
                     if(w->color == 1) {
                         w->color = 0;
                         x->parent->color = 1;
-                        right_rotate_helper(x->parent);
+                        right_rotate_aux(x->parent);
                         w = x->parent->left;
                     }
                     if(w->right->color == 0 && w->left->color == 0) {
@@ -175,13 +191,13 @@ class RBT {
                         if(w->left->color == 0) {
                             w->right->color = 0;
                             w->color = 1;
-                            left_rotate_helper(w);
+                            left_rotate_aux(w);
                             w = x->parent->left;
                         }
                         w->color = x->parent->color;
                         x->parent->color = 0;
                         w->left->color = 0;
-                        right_rotate_helper(x->parent);
+                        right_rotate_aux(x->parent);
                         x = this->root;
                     }
                 }
@@ -189,7 +205,10 @@ class RBT {
             x->color = 0;
         }
 
-        void left_rotate_helper(Node* x){
+        void left_rotate_aux(Node* x){
+            /***
+            Performs left rotate on [Node* x]
+            ***/
             Node* y = x->right;            
             if(y == TNIL) return;
             x->right = y->left;
@@ -210,7 +229,10 @@ class RBT {
             x->parent = y;
         }
 
-        void right_rotate_helper(Node* x) {
+        void right_rotate_aux(Node* x) {
+            /***
+            Performs right rotate on [Node* x]
+            ***/
             Node* y = x-> left;
             if(y == TNIL) return;
             x->left = y->right;
@@ -229,18 +251,19 @@ class RBT {
             x->parent = y;
         }
 
-        int height_helper(Node* x) {
+        int height_aux(Node* x) {
+            /***
+            Returns the maximum length of path from [Node* x] to any leaf node in the subtree rooted at [Node* x].
+            ***/
             int left = 0;
             int right = 0;
             if(x -> left) {
-                left = height_helper(x->left);
+                left = height_aux(x->left);
             }
             if(x -> right) {
-                right = height_helper(x->right);
+                right = height_aux(x->right);
             }
-
             return MAX(left, right) + 1;
-
         }
         
     public:
@@ -256,11 +279,11 @@ class RBT {
             root = TNIL;
         }
         bool insert(int key) {
-            /*
-            Does NOT insert if dublicate key.
-            returns true if success, false if failure (duplicate key)
-            */
-
+            /***
+            Creates a new node with [int key] and inserts it in the tree.
+            If there is already a node with [int key] then insertion will not take place, 
+            in which case false is returned, true otherwise.
+            ***/
             //Initialize the node to be inserted
             Node* z = new Node;
             z->key = key;
@@ -301,8 +324,9 @@ class RBT {
         }
 
         void insert_fixup(Node* z){
-            // for any function call to this function, 
-            // z->parent->parent exists and != TNIL
+            /***
+            Performs set of operations to restore RB property after insertion of a node.
+            ***/
             Node* y;
             while(z->parent->color == 1) {
                 if(z->parent == z->parent->parent->left){
@@ -315,11 +339,11 @@ class RBT {
                     } else {
                         if (z == z->parent->right) {
                             z = z->parent;
-                            left_rotate_helper(z);
+                            left_rotate_aux(z);
                         }
                         z->parent->color = 0;
                         z->parent->parent->color = 1;
-                        right_rotate_helper(z->parent->parent);
+                        right_rotate_aux(z->parent->parent);
                     }
                 } else if(z->parent == z->parent->parent->right){
                     y = z->parent->parent->left;
@@ -331,11 +355,11 @@ class RBT {
                     } else {
                         if (z == z->parent->left) {
                             z = z->parent;
-                            right_rotate_helper(z);
+                            right_rotate_aux(z);
                         }
                         z->parent->color = 0;
                         z->parent->parent->color = 1;
-                        left_rotate_helper(z->parent->parent);
+                        left_rotate_aux(z->parent->parent);
                     }
                 } else {    
                 }
@@ -344,6 +368,9 @@ class RBT {
         }
 
         void inorder(){
+            /***
+            Performs inorder travevrsal from the root
+            ***/
             if (verbose) printf("Inorder traversal\n");
             if (this->root == TNIL) {
                 if (verbose) printf("The tree is empty\n");
@@ -354,6 +381,9 @@ class RBT {
         }
 
         void postorder(){
+            /***
+            Performs preorder travevrsal from the root
+            ***/
             if (verbose) printf("Postorder traversal\n");
             if (this->root == TNIL) {
                 if (verbose) printf("The tree is empty\n");
@@ -364,6 +394,9 @@ class RBT {
         }
 
         void preorder(){
+            /***
+            Performs postorder travevrsal from the root
+            ***/
             if (verbose) printf("Preorder traversal\n");
             if (this->root == TNIL) {
                 if (verbose) printf("The tree is empty\n");
@@ -374,9 +407,10 @@ class RBT {
         }
 
         bool search(int key) {
-            /*
+            /***
+            Performs search of a node with [int key].
             Returns true if the key exists, false if not.
-            */
+            ***/
             Node* ret = search_aux(this->root, key);
             if (!ret) {
                 if(verbose) printf("The key does not exist in the tree.\n");
@@ -387,61 +421,66 @@ class RBT {
             }
         }
 
+        int min() {
+            /***
+            Returns the minimum key that exists in the tree
+            ***/
+            if(is_empty()) abort_program("min() on an empty tree");
+            return min_aux(this->root)->key;
+        }
+
+        int max() {
+            /***
+            Returns the maximum key that exists in the tree
+            ***/
+            if(is_empty()) abort_program("max() on an empty tree");
+            return min_aux(this->root)->key;
+        }
+
+        bool delete_key(int key) {
+            /***
+            Deletes the node with [int key] if it exists, in which case
+            true is returned, false otherwise.
+            ***/
+            Node* node = search_aux(this->root, key);
+            if(!node) {
+                if(verbose) printf("The key does not exist.\n");
+                return false;
+            } else {
+                delete_key_aux(node);
+                if(verbose) printf("deletion completed\n");
+                return true;
+            }
+        }
+
         void abort_program(const char* error){
+            /***
+            Auxiliary function to abort program after printing an error message.
+            ***/
             printf("ERROR: ");
             printf("%s\n", error);
             printf("*****Aborting the program*****\n");
             exit(1);
         }
 
-        int min() {
-            if(is_empty()) abort_program("min() on an empty tree");
-            return minHelper(this->root)->key;
-        }
-
-        int max() {
-            if(is_empty()) abort_program("max() on an empty tree");
-            return minHelper(this->root)->key;
-        }
-
-        bool deleteKey(int key) {
-            Node* node = search_aux(this->root, key);
-            if(!node) {
-                if(verbose) printf("The key does not exist.\n");
-                return false;
-            } else {
-                deleteKeyHelper(node);
-                if(verbose) printf("deletion completed\n");
-                return true;
-            }
+        int height() {
+            /***
+            Calculates the height of the tree
+            ***/
+            return height_aux(this->root) - 1;
         }
 
         void set_verbose(bool boolean) {
+            /***
+            Sets the verbosity setting of the tree
+            ***/
             this->verbose = boolean;
         }
 
-        /*
-        void left_rotate(int key) {
-            
-            Rotates the tree aound the node with the key.
-            Calls the private helper function after checking validity of the input.
-            
-            Node* x = search_aux(this->root, key);
-            left_rotate_helper(x);
-        }
-
-        void right_rotate(int key) {
-            Node* x = search_aux(this->root, key);
-            right_rotate_helper(x);
-
-        }*/
-
-        int height() {
-            return height_helper(this->root) - 1;
-        }
-
         void inspect(Node* x) {
-            /*inspect the tree in in-order manner*/
+            /***
+            Inspect the tree in in-order manner by printing out the information on each node
+            ***/
             if(x) {
                 if(x==this->root) {
                     printf("root key: %i\n", x->key);
@@ -470,31 +509,6 @@ class RBT {
             }
         }
 
-        /*
-        void inspect_node(Node *x) {
-            printf("==============\n");
-            printf("key: %i\n", x->key);
-            printf("color: %i\n", x->color);
-            if(x->left) {
-                printf("Left child exists.");
-                if(x->left == TNIL) {
-                    printf(" which is TNIL\n");
-                } else {
-                    printf("\n");
-                }
-            }
-
-            if(x->right) {
-                printf("Right child exists.");
-                if(x->right == TNIL) {
-                    printf(" which is TNIL\n");
-                } else {
-                    printf("\n");
-                }
-            }
-            printf("==============\n");
-        }*/
-
         bool assert_tree(Node* x) {
             /***
             Check if the following two properties are preserved:
@@ -522,6 +536,9 @@ class RBT {
         }
         
         int count_black_node(Node* x) {
+            /***
+            Counts the number of black node from [Node* x] to TNIL
+            ***/
             if (x == TNIL){return 1;}
 
             int left = count_black_node(x->left);
@@ -539,7 +556,14 @@ class RBT {
 int main(int argc, char* argv[]){
     RBT tree;
     tree.set_verbose(true);
-    tree.inorder();
+    for (int i = 0; i < 10; i ++) {
+        int r = rand() % 100;
+        printf("Inserting %i\n", r);
+        tree.insert(r);
+    }
+
+    tree.inspect(tree.root);
+    tree.delete_key(49);
 }
 
 

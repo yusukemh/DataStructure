@@ -100,10 +100,10 @@ class Treap {
             } else if(u == u->parent->left) {
                 u->parent->left = v;
             } else {
-                u->parent->right = u;
+                u->parent->right = v;
             }
 
-            if(!v) {
+            if(v) {
                 v->parent = u->parent;
             }
         }
