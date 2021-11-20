@@ -3,10 +3,6 @@
 #include <assert.h>
 #include <stdlib.h>
 #define MAX(a,b) (((a)>(b))?(a):(b))
-/*
-TODO
-implement delete
-*/
 
 struct Node{
     int key;
@@ -18,47 +14,56 @@ struct Node{
 
 class RBT {
     private:
-        //Node* root;
-        //Special node tnull
-        //Node* TNIL;
-
-        void inorderHelper(Node* curr) {
-            if (curr) {
-                inorderHelper(curr->left);
-                printf("%i ", curr->key);
-                inorderHelper(curr->right);
+        void inorder_aux(Node* x) {
+            /***
+            Performs inorder traversal from the input node
+            ***/
+            if (x) {
+                inorder_aux(x->left);
+                printf("%i->", x->key);
+                inorder_aux(x->right);
             }
         }
 
-        void preorderHelper(Node* curr) {
-            if (curr) {
-                printf("%i ", curr->key);
-                preorderHelper(curr->left);
-                preorderHelper(curr->right);
+        void preorder_aux(Node* x) {
+            /***
+            Performs preorder traversal from the input node
+            ***/
+            if (x) {
+                printf("%i ", x->key);
+                preorder_aux(x->left);
+                preorder_aux(x->right);
             }
         }
 
-        void postorderHelper(Node* curr) {
-            if (curr) {
-                postorderHelper(curr->left);
-                postorderHelper(curr->right);
-                printf("%i ", curr->key);
+        void postorder_aux(Node* x) {
+            /***
+            Performs postorder traversal from the input node
+            ***/
+            if (x) {
+                postorder_aux(x->left);
+                postorder_aux(x->right);
+                printf("%i ", x->key);
             }
         }
 
-        Node* searchHelper(Node* curr, int key) {
-            while (curr && curr->key != key) {
-                if (key < curr->key) {
-                    curr = curr->left;
+        Node* search_aux(Node* x, int key) {
+            /***
+            Performs search on [int key] in the subtree rooted at [Node* x].
+            Returns nulptr if
+            ***/
+            while (x && x->key != key) {
+                if (key < x->key) {
+                    x = x->left;
                 } else {
-                    curr = curr->right;
+                    x = x->right;
                 }
             }
-            return curr;
+            return x;
         }
 
-        bool isEmpty() {
-            if(!root) {
+        bool is_empty() {
+            if(this->root == TNIL) {
                 return true;
             } else {
                 return false;
@@ -86,13 +91,11 @@ class RBT {
         }
 
         void transplant(Node* u, Node* v) {
-            printf("You should see 9:%i\n", u->parent->key);
             if(u->parent == TNIL) {//if u is the root
                 this->root = v;
             } else if(u == u->parent->left) {
                 u->parent->left = v;
             } else {
-                printf("wait...\n");
                 u->parent->right = v;
             }
             v->parent = u->parent;
@@ -102,9 +105,7 @@ class RBT {
             Node* x;
             Node* y = z;
             int y_original_color = y->color;
-            printf("my color: %i\n", y_original_color);
             if(z->left == TNIL) {
-                printf("You must see me\n");
                 x = z->right;
                 transplant(z, z->right);
             } else if(z->right == TNIL) {
@@ -128,10 +129,8 @@ class RBT {
             }
             delete(z);
             if(y_original_color == 0) {
-                printf("You must also see me\n");
                 delete_fixup(x);
             }
-            printf("I've come here\n");
         }
 
         void delete_fixup(Node* x) {
@@ -346,27 +345,39 @@ class RBT {
 
         void inorder(){
             if (verbose) printf("Inorder traversal\n");
-            inorderHelper(this->root);
-            printf("\n");
+            if (this->root == TNIL) {
+                if (verbose) printf("The tree is empty\n");
+            } else {
+                inorder_aux(this->root);
+                printf("\n");
+            }
         }
 
         void postorder(){
-            if (verbose) printf("Post-order traversal\n");
-            postorderHelper(this->root);
-            printf("\n");
+            if (verbose) printf("Postorder traversal\n");
+            if (this->root == TNIL) {
+                if (verbose) printf("The tree is empty\n");
+            } else {
+                postorder_aux(this->root);
+                printf("\n");
+            }
         }
 
-        void preorder() {
-            if (verbose) printf("Pre-order traversal\n");
-            preorderHelper(this->root);
-            printf("\n");
+        void preorder(){
+            if (verbose) printf("Preorder traversal\n");
+            if (this->root == TNIL) {
+                if (verbose) printf("The tree is empty\n");
+            } else {
+                preorder_aux(this->root);
+                printf("\n");
+            }
         }
 
         bool search(int key) {
             /*
             Returns true if the key exists, false if not.
             */
-            Node* ret = searchHelper(this->root, key);
+            Node* ret = search_aux(this->root, key);
             if (!ret) {
                 if(verbose) printf("The key does not exist in the tree.\n");
                 return false;
@@ -376,31 +387,31 @@ class RBT {
             }
         }
 
-        void min() {
-            if(isEmpty()) {
-                if(verbose) printf("This tree contains no keys.\n");
-            } else {
-                if(verbose) printf("Tree.min = %i\n", minHelper(this->root)->key);
-            }
+        void abort_program(const char* error){
+            printf("ERROR: ");
+            printf("%s\n", error);
+            printf("*****Aborting the program*****\n");
+            exit(1);
         }
 
-        void max() {
-            if(isEmpty()) {
-                printf("This tree contains no keys.\n");
-            } else {
-                printf("Tree.max = %i\n", maxHelper(this->root)->key);
-            }
+        int min() {
+            if(is_empty()) abort_program("min() on an empty tree");
+            return minHelper(this->root)->key;
+        }
+
+        int max() {
+            if(is_empty()) abort_program("max() on an empty tree");
+            return minHelper(this->root)->key;
         }
 
         bool deleteKey(int key) {
-            Node* node = searchHelper(this->root, key);
+            Node* node = search_aux(this->root, key);
             if(!node) {
                 if(verbose) printf("The key does not exist.\n");
                 return false;
             } else {
-                printf("I found the node: %i\n", node->key);
                 deleteKeyHelper(node);
-                printf("deletion completed\n");
+                if(verbose) printf("deletion completed\n");
                 return true;
             }
         }
@@ -409,20 +420,21 @@ class RBT {
             this->verbose = boolean;
         }
 
+        /*
         void left_rotate(int key) {
-            /*
+            
             Rotates the tree aound the node with the key.
             Calls the private helper function after checking validity of the input.
-            */
-            Node* x = searchHelper(this->root, key);
+            
+            Node* x = search_aux(this->root, key);
             left_rotate_helper(x);
         }
 
         void right_rotate(int key) {
-            Node* x = searchHelper(this->root, key);
+            Node* x = search_aux(this->root, key);
             right_rotate_helper(x);
 
-        }
+        }*/
 
         int height() {
             return height_helper(this->root) - 1;
@@ -453,18 +465,12 @@ class RBT {
                 } else {
                     printf("right: %i ", x->right->key);
                 }
-                if(x != TNIL) {
-                    //printf("parents color %i ",x->parent->color);
-                }
-                if(x->parent == TNIL) {
-                    //printf("I HAVE TNIL AS PARENT\n");
-                }
-                
                 printf("\n");
                 inspect(x->right);
             }
         }
 
+        /*
         void inspect_node(Node *x) {
             printf("==============\n");
             printf("key: %i\n", x->key);
@@ -487,7 +493,7 @@ class RBT {
                 }
             }
             printf("==============\n");
-        }
+        }*/
 
         bool assert_tree(Node* x) {
             /***
@@ -533,47 +539,7 @@ class RBT {
 int main(int argc, char* argv[]){
     RBT tree;
     tree.set_verbose(true);
-
-    /*
-    for (int i = 0; i < 10; i ++) {
-        int r = rand() % 100;
-        printf("Inserting %i\n", r);
-        tree.insert(r);
-        assert(tree.assert_tree(tree.root));
-    }
-    tree.inspect(tree.root);
-    tree.search(23);
-    printf("Deleting 23\n");
-    tree.deleteKey(23);
-    tree.inspect(tree.root);
-    */
-    for (int i = 0; i < 1000; i ++) {
-        int r = rand() % 1000;
-        printf("Inserting %i\n", r);
-        tree.insert(r);
-        assert(tree.assert_tree(tree.root));
-    }
-
-    printf("switch up\n");
-    for (int i = 0; i < 10; i ++) {
-        int r = rand() % 100;
-        //printf("Inserting %i\n", r);
-        printf("Deleting %i\n", r);
-        tree.deleteKey(r);
-        tree.inspect(tree.root);
-        assert(tree.assert_tree(tree.root));
-    }
-    tree.deleteKey(49);
-    assert(tree.assert_tree(tree.root));
-    tree.deleteKey(9);
-    assert(tree.assert_tree(tree.root));
-
-    tree.deleteKey(72);
-    assert(tree.assert_tree(tree.root));
-
-    tree.deleteKey(58);
-    assert(tree.assert_tree(tree.root));
-    tree.inspect(tree.root);
+    tree.inorder();
 }
 
 
