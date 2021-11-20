@@ -5,17 +5,7 @@
 #include <time.h>
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
-/*
-TODO
-test
-documentation
-*/
-
 struct Node{
-    /***
-        structure for a Red-Black-Tree Node.
-        properties:
-    ***/
     int key;
     int priority;
     struct Node* parent;
@@ -23,50 +13,68 @@ struct Node{
     struct Node* right;
 };
 
+/***
+TODO: do rotate have to return pointer????
+Add treap-insert to the latex
+***/
+
 class Treap {
     /***
     the priority is represented by strictly negative number.
     0 therefore indicates infinite priority (least prioritized)
     ***/
     private:
-        //Node* root;
-
-        void inorderHelper(Node* curr) {
-            if (curr) {
-                inorderHelper(curr->left);
-                printf("%i ", curr->key);
-                inorderHelper(curr->right);
+        void inorder_aux(Node* x) {
+            /***
+            Performs inorder traversal from [Node* x]
+            ***/
+            if (x) {
+                inorder_aux(x->left);
+                printf("%i ", x->key);
+                inorder_aux(x->right);
             }
         }
 
-        void preorderHelper(Node* curr) {
-            if (curr) {
-                printf("%i ", curr->key);
-                preorderHelper(curr->left);
-                preorderHelper(curr->right);
+        void preorder_aux(Node* x) {
+            /***
+            Performs preorder traversal from [Node* x]
+            ***/
+            if (x) {
+                printf("%i ", x->key);
+                preorder_aux(x->left);
+                preorder_aux(x->right);
             }
         }
 
-        void postorderHelper(Node* curr) {
-            if (curr) {
-                postorderHelper(curr->left);
-                postorderHelper(curr->right);
-                printf("%i ", curr->key);
+        void postorder_aux(Node* x) {
+            /***
+            Performs postorder traversal from [Node* x]
+            ***/
+            if (x) {
+                postorder_aux(x->left);
+                postorder_aux(x->right);
+                printf("%i ", x->key);
             }
         }
 
-        Node* searchHelper(Node* curr, int key) {
-            while (curr && curr->key != key) {
-                if (key < curr->key) {
-                    curr = curr->left;
+        Node* search_aux(Node* x, int key) {
+            /***
+            Performs search on [int key] in the subtree rooted at [Node* x].
+            ***/
+            while (x && x->key != key) {
+                if (key < x->key) {
+                    x = x->left;
                 } else {
-                    curr = curr->right;
+                    x = x->right;
                 }
             }
-            return curr;
+            return x;
         }
 
-        bool isEmpty() {
+        bool is_empty() {
+            /***
+            Returns true if the tree is empty, false otherwise
+            ***/
             if(!root) {
                 return true;
             } else {
@@ -74,27 +82,30 @@ class Treap {
             }
         }
 
-        Node* minHelper(Node* curr) {
-            /*
-            Returns the pointer to the node with the smallest key in the dubtree rooted at curr
-            */
-            while(curr->left) {
-                curr = curr->left;
+        Node* min_aux(Node* x) {
+            /***
+            Returns the pointer to the node with the smallest key in the subtree rooted at [Node* x]
+            ***/
+            while(x->left) {
+                x = x->left;
             }
-            return curr;
+            return x;
         }
 
-        Node* maxHelper(Node* curr) {
-            /*
-            Returns the pointer to the node with the maximum key in the subtree rooted at curr
-            */
-            while(curr->right) {
-                curr = curr->right;
+        Node* max_aux(Node* x) {
+            /***
+            Returns the pointer to the node with the maximum key in the subtree rooted at [Node* x]
+            ***/
+            while(x->right) {
+                x = x->right;
             }
-            return curr;
+            return x;
         }
 
         void transplant(Node* u, Node* v) {
+            /***
+            Transplant the subtree rooted at [Node* v] in the replace of [Node* u]
+            ***/
             if(!u->parent) {
                 this->root = v;//if u is the root
             } else if(u == u->parent->left) {
@@ -108,7 +119,10 @@ class Treap {
             }
         }
 
-        void deleteKeyHelper(Node* z) {
+        void delete_key_aux(Node* z) {
+            /***
+            Performs deletion of node [Node* z]
+            ***/
             z = increase_priority(z);
             if(z == z->parent->left){
                 z->parent->left = nullptr;
@@ -118,8 +132,10 @@ class Treap {
             delete(z);
         }
 
-        Node* left_rotate_helper(Node* x){
-            /*return the pointer to the node closer to the root*/
+        Node* left_rotate_aux(Node* x){
+            /***
+            Performs left rotate on [Node* x]
+            ***/
             Node* y = x->right;
             if(!y){
                 printf("You are not supposed to call left_rotate\n");
@@ -142,8 +158,10 @@ class Treap {
             return y;
         }
 
-        Node* right_rotate_helper(Node* x) {
-            /*return the pointer to the node closer to the root*/
+        Node* right_rotate_aux(Node* x) {
+            /***
+            Performs right rotate on [Node* x]
+            ***/
             Node* y = x-> left;
             if(!y){
                 printf("You are not supposed to call left_rotate\n");
@@ -166,14 +184,17 @@ class Treap {
             return y;
         }
 
-        int height_helper(Node* x) {
+        int height_aux(Node* x) {
+            /***
+            Returns the maximum length of path from [Node* x] to any leaf node in the subtree rooted at [Node* x].
+            ***/
             int left = 0;
             int right = 0;
             if(x -> left) {
-                left = height_helper(x->left);
+                left = height_aux(x->left);
             }
             if(x -> right) {
-                right = height_helper(x->right);
+                right = height_aux(x->right);
             }
 
             return MAX(left, right) + 1;
@@ -189,14 +210,14 @@ class Treap {
             x->priority = 0;
             while(x->left || x->right) {
                 if(!x->left) {//if only right child exists
-                    left_rotate_helper(x);
+                    left_rotate_aux(x);
                 } else if (!x->right) {//if only left child exists
-                    right_rotate_helper(x);
+                    right_rotate_aux(x);
                 } else {//if both child exists
                     if(x->left->priority < x->right->priority) {
-                        right_rotate_helper(x);
+                        right_rotate_aux(x);
                     } else {
-                        left_rotate_helper(x);
+                        left_rotate_aux(x);
                     }
                 }
             }
@@ -207,15 +228,15 @@ class Treap {
         Node* root;
         bool verbose;
         bool insert(int key) {
-            /*
-            Does NOT insert if dublicate key.
-            returns true if success, false if failure (duplicate key)
-            */
+            /***
+            Creates a new node with [int key] and inserts it in the tree.
+            If there is already a node with [int key] then insertion will not take place, 
+            in which case false is returned, true otherwise.
+            ***/
 
             Node* node = new Node;
             node->key = key;
             node->priority = - (rand() + 1);//shift by one to make sure 0 never occurs
-            //printf("priority: %i\n", node->priority);
             
             Node* curr = this->root;
             Node* parent = nullptr;
@@ -240,14 +261,12 @@ class Treap {
                 parent->right = node;
             }
 
-            /*
-            fix the tree to maintian the heap property, using priority
-            */
+            //fix the tree to maintian the heap property, using priority
             while(node->parent && node->priority < node->parent->priority){
                 if(node == node->parent->right){// if I am the right child
-                    node = left_rotate_helper(node->parent);
+                    node = left_rotate_aux(node->parent);
                 } else if (node == node->parent->left){// if I am the left child
-                    node = right_rotate_helper(node->parent);
+                    node = right_rotate_aux(node->parent);
                 } else {
                     printf("something is wrong");
                 }
@@ -257,28 +276,50 @@ class Treap {
         }
 
         void inorder(){
+            /***
+            Performs inorder travevrsal from the root
+            ***/
             if (verbose) printf("Inorder traversal\n");
-            inorderHelper(this->root);
-            printf("\n");
+            if (is_empty()) {
+                if (verbose) printf("The tree is empty\n");
+            } else {
+                inorder_aux(this->root);
+                printf("\n");
+            }
         }
 
         void postorder(){
-            if (verbose) printf("Post-order traversal\n");
-            postorderHelper(this->root);
-            printf("\n");
+            /***
+            Performs preorder travevrsal from the root
+            ***/
+            if (verbose) printf("Postorder traversal\n");
+            if (is_empty()) {
+                if (verbose) printf("The tree is empty\n");
+            } else {
+                postorder_aux(this->root);
+                printf("\n");
+            }
         }
 
-        void preorder() {
-            if (verbose) printf("Pre-order traversal\n");
-            preorderHelper(this->root);
-            printf("\n");
+        void preorder(){
+            /***
+            Performs postorder travevrsal from the root
+            ***/
+            if (verbose) printf("Preorder traversal\n");
+            if (is_empty()) {
+                if (verbose) printf("The tree is empty\n");
+            } else {
+                preorder_aux(this->root);
+                printf("\n");
+            }
         }
 
         bool search(int key) {
-            /*
+            /***
+            Performs search of a node with [int key].
             Returns true if the key exists, false if not.
-            */
-            Node* ret = searchHelper(this->root, key);
+            ***/
+            Node* ret = search_aux(this->root, key);
             if (!ret) {
                 if(verbose) printf("The key does not exist in the tree.\n");
                 return false;
@@ -288,74 +329,82 @@ class Treap {
             }
         }
 
-        void min() {
-            if(isEmpty()) {
-                if(verbose) printf("This tree contains no keys.\n");
-            } else {
-                if(verbose) printf("Tree.min = %i\n", minHelper(this->root)->key);
-            }
+        int min() {
+            /***
+            Returns the minimum key that exists in the tree
+            ***/
+            if(is_empty()) abort_program("min() on an empty tree");
+            return min_aux(this->root)->key;
         }
 
-        void max() {
-            if(isEmpty()) {
-                printf("This tree contains no keys.\n");
-            } else {
-                printf("Tree.max = %i\n", maxHelper(this->root)->key);
-            }
+        int max() {
+            /***
+            Returns the maximum key that exists in the tree
+            ***/
+            if(is_empty()) abort_program("max() on an empty tree");
+            return min_aux(this->root)->key;
         }
 
-        bool deleteKey(int key) {
-            Node* node = searchHelper(this->root, key);
+        bool delete_key(int key) {
+            /***
+            Deletes the node with [int key] if it exists, in which case
+            true is returned, false otherwise.
+            ***/
+            Node* node = search_aux(this->root, key);
             if(!node) {
                 if(verbose) printf("The key does not exist.\n");
                 return false;
             } else {
-                deleteKeyHelper(node);
+                delete_key_aux(node);
                 return true;
             }
+        }
+
+        void abort_program(const char* error){
+            /***
+            Auxiliary function to abort program after printing an error message.
+            ***/
+            printf("ERROR: ");
+            printf("%s\n", error);
+            printf("*****Aborting the program*****\n");
+            exit(1);
+        }
+
+        int height() {
+            /***
+            Calculates the height of the tree
+            ***/
+            return height_aux(this->root) - 1;
         }
 
         void set_verbose(bool boolean) {
             this->verbose = boolean;
         }
 
-        void left_rotate(int key) {
-            /*
-            Rotates the tree aound the node with the key.
-            Calls the private helper function after checking validity of the input.
-            */
-            Node* x = searchHelper(this->root, key);
-            left_rotate_helper(x);
-        }
-
-        void right_rotate(int key) {
-            Node* x = searchHelper(this->root, key);
-            right_rotate_helper(x);
-
-        }
-
-        int height() {
-            return height_helper(this->root) - 1;
-        }
-
         void inspect(Node* x) {
+            /***
+            Inspect the tree in in-order manner by printing out the information on each node
+            ***/
             if(x) {
                 if(x==this->root) {
                     printf("root key: %i\n", x->key);
                     printf("height: %i\n", this->height());
                 }
-                inspect(x->left);
-                printf("key: %3i ", x->key);
-                printf("priority: %10i ", int(x->priority/100000));
-                if(x->left) {
-                    printf("left: %4i ", x->left->key);
-                } else {
-                    printf("left: none ");
+                if(!x) {
+                    return;
                 }
-                if(x->right) {
-                    printf("right: %4i ", x->right->key);
+                inspect(x->left);
+                printf("key: %i ", x->key);
+                if(!x->left) {
+                    printf("left: none ");
                 } else {
+                    printf("left: %i ", x->left->key);
+                }
+
+                if(!x->right) {
                     printf("right: none");
+                } else {
+                    printf("right: %i ", x->right->key);
                 }
                 printf("\n");
                 inspect(x->right);
@@ -388,9 +437,8 @@ class Treap {
 
 int main(int argc, char* argv[]){
     Treap tree;
-    //srand (time(NULL));
     tree.set_verbose(true);
-    printf("%i\n", RAND_MAX);
+
 
     for (int i = 0; i < 10; i ++) {
         int r = rand() % 100;
@@ -400,26 +448,7 @@ int main(int argc, char* argv[]){
     }
     printf("=========\n");
     tree.inspect(tree.root);
-    // tree.preorder();
-    // tree.inorder();
-    // tree.postorder();
-    // printf("height: %i\n", tree.height());
-    // tree.inspect(tree.root);
-    // // printf("++++++++++++\n");
-    // // tree.left_rotate(49);
-    // // tree.inspect(tree.root);
-
-    // printf("++++++++++++\n");
-    // tree.right_rotate(49);
-    // tree.inspect(tree.root);
-    // tree.left_rotate(7);
-    // printf("%i\n", tree.root->key);
-    assert(tree.assert_tree(tree.root));
-    printf("height: %i\n", tree.height());
-    tree.deleteKey(23);
-    printf("After deletion\n");
-    tree.inspect(tree.root);
-    tree.search(7);
+    tree.assert_tree(tree.root);
 
 }
 

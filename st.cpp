@@ -4,12 +4,6 @@ Fall 2021
 Reference: CLRS, 2009
 ***/
 
-/*
-TODO
-DONE: implement splay() in insertion
-test if it is the case that if we search from smalest to the largest it will make it a linear tree?
-check the root deletion.
-*/
 #include <stdio.h>
 #include <cstddef>
 #include <assert.h>
@@ -288,24 +282,7 @@ class SplayTree {
             }
             return true;
         }
-        /*
-        void inorder(){
-            if (verbose) printf("Inorder traversal\n");
-            inorderHelper(this->root);
-            printf("\n");
-        }
-
-        void postorder(){
-            if (verbose) printf("Post-order traversal\n");
-            postorderHelper(this->root);
-            printf("\n");
-        }
-
-        void preorder() {
-            if (verbose) printf("Pre-order traversal\n");
-            preorderHelper(this->root);
-            printf("\n");
-        }*/
+        
         void inorder(){
             /***
             Performs inorder travevrsal from the root
@@ -380,6 +357,7 @@ class SplayTree {
             /***
             Deletes the node with [int key] if it exists, in which case
             true is returned, false otherwise.
+            Performs seach at the beginning, which in tern performs splay()
             ***/
             Node* node = search_aux(this->root, key);
             printf("structure right before deletion\n");
@@ -448,21 +426,6 @@ class SplayTree {
                 inspect(x->right);
             }
         }
-
-        /*
-        void left_rotate(int key) {
-            
-            Rotates the tree aound the node with the key.
-            Calls the private helper function after checking validity of the input.
-            
-            Node* x = search_helper(this->root, key);
-            left_rotate_helper(x);
-        }
-
-        void right_rotate(int key) {
-            Node* x = search_helper(this->root, key);
-            right_rotate_helper(x);
-        }*/
 };
 
 int main(int argc, char* argv[]){
