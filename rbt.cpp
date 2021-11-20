@@ -5,8 +5,6 @@
 #define MAX(a,b) (((a)>(b))?(a):(b))
 /*
 TODO
-fix insert
-implement checker function for rbt property
 implement delete
 */
 
@@ -69,9 +67,9 @@ class RBT {
 
         Node* minHelper(Node* curr) {
             /*
-            Returns the pointer to the node with the smallest key in the dubtree rooted at curr
+            Returns the pointer to the node with the smallest key in the subtree rooted at curr
             */
-            while(curr->left) {
+            while(curr->left != TNIL) {
                 curr = curr->left;
             }
             return curr;
@@ -88,27 +86,37 @@ class RBT {
         }
 
         void transplant(Node* u, Node* v) {
-            if(!u->parent) {
-                this->root = v;//if u is the root
+            printf("You should see 9:%i\n", u->parent->key);
+            if(u->parent == TNIL) {//if u is the root
+                this->root = v;
             } else if(u == u->parent->left) {
                 u->parent->left = v;
             } else {
-                u->parent->right = u;
+                printf("wait...\n");
+                u->parent->right = v;
             }
-
-            if(!v) {
-                v->parent = u->parent;
-            }
+            v->parent = u->parent;
         }
 
         void deleteKeyHelper(Node* z) {
-            if(!z->left) {
+            Node* x;
+            Node* y = z;
+            int y_original_color = y->color;
+            printf("my color: %i\n", y_original_color);
+            if(z->left == TNIL) {
+                printf("You must see me\n");
+                x = z->right;
                 transplant(z, z->right);
-            } else if(!z->right) {
+            } else if(z->right == TNIL) {
+                x = z->left;
                 transplant(z, z->left);
             } else {
-                Node* y = minHelper(z->right);
-                if (y->parent) {
+                y = minHelper(z->right);
+                y_original_color = y->color;
+                x = y->right;
+                if(y->parent == z) {
+                    x->parent = y;
+                } else {
                     transplant(y, y->right);
                     y->right = z->right;
                     y->right->parent = y;
@@ -116,15 +124,76 @@ class RBT {
                 transplant(z, y);
                 y->left = z->left;
                 y->left->parent = y;
+                y->color = z->color;
             }
+            delete(z);
+            if(y_original_color == 0) {
+                printf("You must also see me\n");
+                delete_fixup(x);
+            }
+            printf("I've come here\n");
+        }
+
+        void delete_fixup(Node* x) {
+            while(x != this->root && x->color == 0) {
+                Node* w;
+                if(x == x->parent->left) {
+                    w = x->parent->right;
+                    if(w->color == 1) {
+                        w->color = 0;
+                        x->parent->color = 1;
+                        left_rotate_helper(x->parent);
+                        w = x->parent->right;
+                    }
+                    if(w->left->color == 0 && w->right->color == 0) {
+                        w->color = 1;
+                        x = x->parent;
+                    } else {
+                        if(w->right->color == 0) {
+                            w->left->color = 0;
+                            w->color = 1;
+                            right_rotate_helper(w);
+                            w = x->parent->right;
+                        }
+                        w->color = x->parent->color;
+                        x->parent->color = 0;
+                        w->right->color = 0;
+                        left_rotate_helper(x->parent);
+                        x = this->root;
+                    }
+                } else {
+                    w = x->parent->left;
+                    if(w->color == 1) {
+                        w->color = 0;
+                        x->parent->color = 1;
+                        right_rotate_helper(x->parent);
+                        w = x->parent->left;
+                    }
+                    if(w->right->color == 0 && w->left->color == 0) {
+                        w->color = 1;
+                        x = x->parent;
+                    } else {
+                        if(w->left->color == 0) {
+                            w->right->color = 0;
+                            w->color = 1;
+                            left_rotate_helper(w);
+                            w = x->parent->left;
+                        }
+                        w->color = x->parent->color;
+                        x->parent->color = 0;
+                        w->left->color = 0;
+                        right_rotate_helper(x->parent);
+                        x = this->root;
+                    }
+                }
+            }
+            x->color = 0;
         }
 
         void left_rotate_helper(Node* x){
             Node* y = x->right;            
             if(y == TNIL) return;
             x->right = y->left;
-        
-
             if (y->left != TNIL) {
                 y->left->parent = x;
             }
@@ -329,7 +398,9 @@ class RBT {
                 if(verbose) printf("The key does not exist.\n");
                 return false;
             } else {
+                printf("I found the node: %i\n", node->key);
                 deleteKeyHelper(node);
+                printf("deletion completed\n");
                 return true;
             }
         }
@@ -463,14 +534,45 @@ int main(int argc, char* argv[]){
     RBT tree;
     tree.set_verbose(true);
 
+    /*
+    for (int i = 0; i < 10; i ++) {
+        int r = rand() % 100;
+        printf("Inserting %i\n", r);
+        tree.insert(r);
+        assert(tree.assert_tree(tree.root));
+    }
+    tree.inspect(tree.root);
+    tree.search(23);
+    printf("Deleting 23\n");
+    tree.deleteKey(23);
+    tree.inspect(tree.root);
+    */
     for (int i = 0; i < 1000; i ++) {
-        int r = rand() % 100000;
+        int r = rand() % 1000;
         printf("Inserting %i\n", r);
         tree.insert(r);
         assert(tree.assert_tree(tree.root));
     }
 
-    printf("height: %i\n", tree.height());
+    printf("switch up\n");
+    for (int i = 0; i < 10; i ++) {
+        int r = rand() % 100;
+        //printf("Inserting %i\n", r);
+        printf("Deleting %i\n", r);
+        tree.deleteKey(r);
+        tree.inspect(tree.root);
+        assert(tree.assert_tree(tree.root));
+    }
+    tree.deleteKey(49);
+    assert(tree.assert_tree(tree.root));
+    tree.deleteKey(9);
+    assert(tree.assert_tree(tree.root));
+
+    tree.deleteKey(72);
+    assert(tree.assert_tree(tree.root));
+
+    tree.deleteKey(58);
+    assert(tree.assert_tree(tree.root));
     tree.inspect(tree.root);
 }
 
