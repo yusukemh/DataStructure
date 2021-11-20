@@ -383,6 +383,9 @@ class Treap {
         }
 
         void set_verbose(bool boolean) {
+            /***
+            Sets the verbosity setting of the tree
+            ***/
             this->verbose = boolean;
         }
 
