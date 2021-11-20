@@ -1,3 +1,8 @@
+/***
+ICS621 Final Project
+Fall 2021
+Reference: CLRS, 2009
+***/
 #include <stdio.h>
 #include <cstddef>
 #include <assert.h>
