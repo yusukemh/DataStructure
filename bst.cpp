@@ -310,33 +310,35 @@ class BST {
 int main(int argc, char* argv[]){
     BST tree;
     tree.set_verbose(true);
-
     printf("file_name =  %s\n", argv[1]);
-
     FILE* file = fopen(argv[1], "r");
     if(!file) {
-        printf("Unable to open file\n");
+        //printf("Unable to open file\n");
         exit(-1);
     }
     char line[64];
     char* str_num;
     int num;
     while(fgets(line, sizeof(line), file)) {
-        printf("line: %s", line);
+        //printf("line: %s", line);
         str_num = &line[2];
         num = strtol(str_num, NULL, 10);
         switch(line[0]) {
             case 'i':
+                tree.insert(num);
                 printf("insert %i\n", num);
                 break;
             case 'd':
+                tree.deleteKey(num);
                 printf("delete %i\n", num);
                 break;
             case 's':
+                tree.search(num);
                 printf("serach %i\n", num);
                 break;
         }
     }
+    tree.inspect(tree.root);
 
 }
 
