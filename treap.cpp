@@ -448,11 +448,11 @@ int main(int argc, char* argv[]){
     tree.set_verbose(true);
 
 
-    for (int i = 0; i < 10; i ++) {
-        int r = rand() % 100;
+    for (int i = 0; i < 10000; i ++) {
+        int r = rand() % 1000000;
         // printf("%i", r);
         tree.insert(r);
-        printf("Inserting %i\n", r);
+        //printf("Inserting %i\n", r);
     }
     printf("=========\n");
     tree.inspect(tree.root);

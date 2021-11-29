@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
 struct Node{
@@ -310,26 +311,32 @@ int main(int argc, char* argv[]){
     BST tree;
     tree.set_verbose(true);
 
-    for (int i = 0; i < 10; i ++) {
-        int r = rand() % 100;
-        // printf("%i", r);
-        tree.insert(r);
-        printf("Inserting %i\n", r);
-    }
-    tree.preorder();
-    tree.inorder();
-    tree.postorder();
-    printf("height: %i\n", tree.height());
-    tree.inspect(tree.root);
-    // printf("++++++++++++\n");
-    // tree.left_rotate(49);
-    // tree.inspect(tree.root);
+    printf("file_name =  %s\n", argv[1]);
 
-    printf("++++++++++++\n");
-    tree.right_rotate(49);
-    tree.inspect(tree.root);
-    tree.left_rotate(7);
-    printf("%i\n", tree.root->key);
+    FILE* file = fopen(argv[1], "r");
+    if(!file) {
+        printf("Unable to open file\n");
+        exit(-1);
+    }
+    char line[64];
+    char* str_num;
+    int num;
+    while(fgets(line, sizeof(line), file)) {
+        printf("line: %s", line);
+        str_num = &line[2];
+        num = strtol(str_num, NULL, 10);
+        switch(line[0]) {
+            case 'i':
+                printf("insert %i\n", num);
+                break;
+            case 'd':
+                printf("delete %i\n", num);
+                break;
+            case 's':
+                printf("serach %i\n", num);
+                break;
+        }
+    }
 
 }
 
