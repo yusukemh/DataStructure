@@ -130,22 +130,33 @@ class Treap {
             Performs deletion of node [Node* z]
             ***/
             z = increase_priority(z);
-            if(z == z->parent->left){
+            //inspect(root);
+
+            
+            if(z == this->root) {
+                this->root = nullptr;
+            } else if(z == z->parent->left){
                 z->parent->left = nullptr;
             } else {
                 z->parent->right = nullptr;
             }
+            /*
+            if(z == z->parent->left){
+                z->parent->left = nullptr;
+            } else {
+                z->parent->right = nullptr;
+            }*/
             delete(z);
         }
 
-        Node* left_rotate_aux(Node* x){
+        void left_rotate_aux(Node* x){
             /***
             Performs left rotate on [Node* x]
             ***/
             Node* y = x->right;
             if(!y){
                 printf("You are not supposed to call left_rotate\n");
-                return nullptr;
+                //return nullptr;
             }
             x->right = y->left;
             if (y->left) {
@@ -161,17 +172,17 @@ class Treap {
             }
             y->left = x;
             x->parent = y;
-            return y;
+            //return y;
         }
 
-        Node* right_rotate_aux(Node* x) {
+        void right_rotate_aux(Node* x) {
             /***
             Performs right rotate on [Node* x]
             ***/
             Node* y = x-> left;
             if(!y){
                 printf("You are not supposed to call left_rotate\n");
-                return nullptr;
+                //return nullptr;
             }
             x->left = y->right;
             if (y->right) {
@@ -187,7 +198,7 @@ class Treap {
             }
             y->right = x;
             x->parent = y;
-            return y;
+            //return y;
         }
 
         int height_aux(Node* x) {
@@ -241,38 +252,45 @@ class Treap {
             ***/
 
             Node* node = new Node;
+            node->right = nullptr;
+            node->left = nullptr;
             node->key = key;
             node->priority = - (rand() + 1);//shift by one to make sure 0 never occurs
+            //node->priority = - (rand() % 1000 + 1);//shift by one to make sure 0 never occurs
             
-            Node* curr = this->root;
-            Node* parent = nullptr;
+            Node* x = this->root;
+            Node* y = nullptr;
 
-            while (curr) {
-                parent = curr;
-                if(node->key < curr->key) {
-                    curr = curr->left;
-                } else if(node->key > curr->key){
-                    curr = curr->right;
+            while (x) {
+                y = x;
+                if(node->key < x->key) {
+                    x = x->left;
+                } else if(node->key > x->key){
+                    x = x->right;
                 } else {
                     return false;
                 }
             }
 
-            node->parent = parent;
-            if(!parent) {
+
+            node->parent = y;
+            if(!y) {
                 this->root = node; //Tree was empty
-            } else if(node->key < parent->key) {
-                parent->left = node;
+            } else if(node->key < y->key) {
+                y->left = node;
             } else {
-                parent->right = node;
+                y->right = node;
             }
+            //printf("doyouseme\n");
 
             //fix the tree to maintian the heap property, using priority
             while(node->parent && node->priority < node->parent->priority){
                 if(node == node->parent->right){// if I am the right child
-                    node = left_rotate_aux(node->parent);
+                    //node = left_rotate_aux(node->parent);
+                    left_rotate_aux(node->parent);
                 } else if (node == node->parent->left){// if I am the left child
-                    node = right_rotate_aux(node->parent);
+                    //node = right_rotate_aux(node->parent);
+                    right_rotate_aux(node->parent);
                 } else {
                     printf("something is wrong");
                 }
@@ -449,7 +467,8 @@ class Treap {
 int main(int argc, char* argv[]){
     Treap tree;
     tree.set_verbose(false);
-    /*
+    tree.root = nullptr;
+    
     printf("file_name =  %s\n", argv[1]);
     FILE* file = fopen(argv[1], "r");
     if(!file) {
@@ -465,34 +484,39 @@ int main(int argc, char* argv[]){
         num = strtol(str_num, NULL, 10);
         switch(line[0]) {
             case 'i':
-                //printf("insert %i\n", num);
+                printf("insert %i\n", num);
                 tree.insert(num);
                 break;
             case 'd':
-                //printf("delete %i\n", num);
+                printf("delete %i\n", num);
                 tree.delete_key(num);
                 break;
             case 's':
-                //printf("serach %i\n", num);
+                printf("serach %i\n", num);
                 tree.search(num);
                 break;
         }
     }
+    printf("complete\n");
     tree.inspect(tree.root);
-    */
-    for (int i = 0; i < 1000000; i ++) {
-        int r = rand() % 1000;
-        //printf("Inserting %i\n", r);
+    
+    /*
+    for (int i = 0; i < 100; i ++) {
+        int r = rand() % 10;
+        printf("Inserting %i\n", r);
         tree.insert(r);
     }
 
-    /*
-    for (int i = 0; i < 1000000; i ++) {
-        int r = rand() % 1000;
-        //printf("Inserting %i\n", r);
+    
+    for (int i = 0; i < 100; i ++) {
+        int r = rand() % 10;
+        printf("Deleting %i\n", r);
         tree.delete_key(r);
     }
     */
+
+    
+    
 
 }
 
