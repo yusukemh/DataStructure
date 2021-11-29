@@ -66,6 +66,7 @@ class Treap {
             /***
             Performs search on [int key] in the subtree rooted at [Node* x].
             ***/
+            //printf("inside.\n");
             while (x && x->key != key) {
                 if (key < x->key) {
                     x = x->left;
@@ -325,6 +326,7 @@ class Treap {
             Returns true if the key exists, false if not.
             ***/
             Node* ret = search_aux(this->root, key);
+            //printf("do you see me?\n");
             if (!ret) {
                 if(verbose) printf("The key does not exist in the tree.\n");
                 return false;
@@ -355,6 +357,7 @@ class Treap {
             Deletes the node with [int key] if it exists, in which case
             true is returned, false otherwise.
             ***/
+            //printf("serching %i\n", key);
             Node* node = search_aux(this->root, key);
             if(!node) {
                 if(verbose) printf("The key does not exist.\n");
@@ -445,7 +448,8 @@ class Treap {
 
 int main(int argc, char* argv[]){
     Treap tree;
-    tree.set_verbose(true);
+    tree.set_verbose(false);
+    /*
     printf("file_name =  %s\n", argv[1]);
     FILE* file = fopen(argv[1], "r");
     if(!file) {
@@ -461,20 +465,34 @@ int main(int argc, char* argv[]){
         num = strtol(str_num, NULL, 10);
         switch(line[0]) {
             case 'i':
+                //printf("insert %i\n", num);
                 tree.insert(num);
-                printf("insert %i\n", num);
                 break;
             case 'd':
+                //printf("delete %i\n", num);
                 tree.delete_key(num);
-                printf("delete %i\n", num);
                 break;
             case 's':
+                //printf("serach %i\n", num);
                 tree.search(num);
-                printf("serach %i\n", num);
                 break;
         }
     }
     tree.inspect(tree.root);
+    */
+    for (int i = 0; i < 1000000; i ++) {
+        int r = rand() % 1000;
+        //printf("Inserting %i\n", r);
+        tree.insert(r);
+    }
+
+    /*
+    for (int i = 0; i < 1000000; i ++) {
+        int r = rand() % 1000;
+        //printf("Inserting %i\n", r);
+        tree.delete_key(r);
+    }
+    */
 
 }
 

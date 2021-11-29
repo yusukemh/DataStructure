@@ -360,9 +360,9 @@ class SplayTree {
             Performs seach at the beginning, which in tern performs splay()
             ***/
             Node* node = search_aux(this->root, key);
-            printf("structure right before deletion\n");
-            inspect(this->root);
-            printf("===============================\n");
+            //printf("structure right before deletion\n");
+            //inspect(this->root);
+            //printf("===============================\n");
             if(!node) {
                 if(verbose) printf("The key does not exist.\n");
                 return false;
@@ -431,6 +431,39 @@ class SplayTree {
 int main(int argc, char* argv[]){
     SplayTree tree;
     tree.set_verbose(false);
+
+    printf("file_name =  %s\n", argv[1]);
+    FILE* file = fopen(argv[1], "r");
+    if(!file) {
+        printf("Unable to open file\n");
+        exit(-1);
+    }
+    char line[64];
+    char* str_num;
+    int num;
+    while(fgets(line, sizeof(line), file)) {
+        //printf("line: %s", line);
+        str_num = &line[2];
+        num = strtol(str_num, NULL, 10);
+        switch(line[0]) {
+            case 'i':
+                //printf("insert %i\n", num);
+                tree.insert(num);
+                break;
+            case 'd':
+                //printf("delete %i\n", num);
+                tree.deleteKey(num);
+                break;
+            case 's':
+                //printf("serach %i\n", num);
+                tree.search(num);
+                break;
+        }
+    }
+    printf("%i\n", tree.height());
+    printf("complete\n");
+
+    /*
 
     for (int i = 0; i < 10; i ++) {
         int r = rand() % 1000;
@@ -511,6 +544,7 @@ int main(int argc, char* argv[]){
         //printf("Searching %i\n", r);
     }
     printf("%i\n", tree.height());
+    */
     
 }
 

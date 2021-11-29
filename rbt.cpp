@@ -555,7 +555,40 @@ class RBT {
 
 int main(int argc, char* argv[]){
     RBT tree;
-    tree.set_verbose(true);
+    tree.set_verbose(false);
+
+    printf("file_name =  %s\n", argv[1]);
+    FILE* file = fopen(argv[1], "r");
+    if(!file) {
+        printf("Unable to open file\n");
+        exit(-1);
+    }
+    char line[64];
+    char* str_num;
+    int num;
+    while(fgets(line, sizeof(line), file)) {
+        //printf("line: %s", line);
+        str_num = &line[2];
+        num = strtol(str_num, NULL, 10);
+        switch(line[0]) {
+            case 'i':
+                //printf("insert %i\n", num);
+                tree.insert(num);
+                break;
+            case 'd':
+                //printf("delete %i\n", num);
+                tree.delete_key(num);
+                break;
+            case 's':
+                //printf("serach %i\n", num);
+                tree.search(num);
+                break;
+        }
+    }
+    printf("%i\n", tree.height());
+    printf("complete\n");
+
+    /*
     for (int i = 0; i < 10; i ++) {
         int r = rand() % 100;
         printf("Inserting %i\n", r);
@@ -564,6 +597,7 @@ int main(int argc, char* argv[]){
 
     tree.inspect(tree.root);
     tree.delete_key(49);
+    */
 }
 
 
