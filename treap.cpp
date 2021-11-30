@@ -8,7 +8,12 @@ Reference: CLRS, 2009
 #include <assert.h>
 #include <stdlib.h>
 #include <time.h>
+
+
+#include <random>
+#include <iostream>
 #define MAX(a,b) (((a)>(b))?(a):(b))
+#define MAX_KEY_VALUE 2147483647
 
 struct Node{
     int key;
@@ -244,6 +249,25 @@ class Treap {
     public:
         Node* root;
         bool verbose;
+        std::random_device rd;
+        std::mt19937 gen;
+        std::uniform_int_distribution<> dist;
+
+        Treap() {
+            printf("Hello\n");
+            /*
+            for (int i = 0; i <10; i ++) {
+                std::cout << dist(gen) << ' ';
+            }*/
+
+
+            /*
+            std::random_device rd;  //Will be used to obtain a seed for the random number engine
+            std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+            std::uniform_int_distribution<> distrib(1,MAX_KEY_VALUE);
+            */
+        }
+
         bool insert(int key) {
             /***
             Creates a new node with [int key] and inserts it in the tree.
@@ -255,8 +279,10 @@ class Treap {
             node->right = nullptr;
             node->left = nullptr;
             node->key = key;
-            node->priority = - (rand() + 1);//shift by one to make sure 0 never occurs
-            //node->priority = - (rand() % 1000 + 1);//shift by one to make sure 0 never occurs
+            //node->priority = - (rand() + 1);//shift by one to make sure 0 never occurs
+            //node->priority = - dist(this->gen);
+            node->priority = - dist(gen);
+            printf("%i\n", dist.max());
             
             Node* x = this->root;
             Node* y = nullptr;
