@@ -484,21 +484,22 @@ int main(int argc, char* argv[]){
         num = strtol(str_num, NULL, 10);
         switch(line[0]) {
             case 'i':
-                printf("insert %i\n", num);
+                //printf("insert %i\n", num);
                 tree.insert(num);
                 break;
             case 'd':
-                printf("delete %i\n", num);
+                //printf("delete %i\n", num);
                 tree.delete_key(num);
                 break;
             case 's':
-                printf("serach %i\n", num);
+                //printf("serach %i\n", num);
                 tree.search(num);
                 break;
         }
     }
     printf("complete\n");
-    tree.inspect(tree.root);
+    //tree.inspect(tree.root);
+    printf("tree height %i\n", tree.height());
     
     /*
     for (int i = 0; i < 100; i ++) {
