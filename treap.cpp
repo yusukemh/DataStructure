@@ -254,18 +254,8 @@ class Treap {
         std::uniform_int_distribution<> dist;
 
         Treap() {
-            printf("Hello\n");
-            /*
-            for (int i = 0; i <10; i ++) {
-                std::cout << dist(gen) << ' ';
-            }*/
-
-
-            /*
-            std::random_device rd;  //Will be used to obtain a seed for the random number engine
-            std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-            std::uniform_int_distribution<> distrib(1,MAX_KEY_VALUE);
-            */
+            // At the time of construction, set the seed as random number
+            gen.seed(rd());
         }
 
         bool insert(int key) {
@@ -281,8 +271,9 @@ class Treap {
             node->key = key;
             //node->priority = - (rand() + 1);//shift by one to make sure 0 never occurs
             //node->priority = - dist(this->gen);
+            //gen.seed(rd());
             node->priority = - dist(gen);
-            printf("%i\n", dist.max());
+            //printf("%i\n", node->priority);
             
             Node* x = this->root;
             Node* y = nullptr;
@@ -494,6 +485,11 @@ int main(int argc, char* argv[]){
     Treap tree;
     tree.set_verbose(false);
     tree.root = nullptr;
+
+    // for(int i =0; i < 10; i ++ ){
+    //     tree.insert(rand() % 100);
+    // } 
+    // return 0;
     
     printf("file_name =  %s\n", argv[1]);
     FILE* file = fopen(argv[1], "r");
