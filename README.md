@@ -17,4 +17,6 @@ For example, to run the second instance of test set A-I-50000 on RBT tree, run</
 - run_analysis.py</br>
 To run, `python3 run_analysis.py`</br>
 This file runs analysis on every instance of test set for five times each. Inside the file, set the `if` block to `True` or `False` to determine which analysis to run.</br>
-Calculates average execution time for each type of test set and prints it out.
+Calculates average execution time for each type of test set and prints it out.</br>
+If running analysis on H test sets, make sure to alter all .cpp files as follows:</br>
+`bool height_analysis = false;` => `bool height_analysis = true;`
