@@ -7,7 +7,9 @@ Reference: CLRS, 2009
 #include <cstddef>
 #include <assert.h>
 #include <stdlib.h>
+#include <time.h>
 #define MAX(a,b) (((a)>(b))?(a):(b))
+#define BILLION 1000000000L
 
 struct Node{
     int key;
@@ -557,6 +559,14 @@ int main(int argc, char* argv[]){
     RBT tree;
     tree.set_verbose(false);
 
+    //===============TIMER=====================
+    uint64_t t_diff;
+    double sec_diff;
+    struct timespec t_start, t_end;
+    // start timer
+    clock_gettime(CLOCK_REALTIME, &t_start);
+    //===============TIMER=====================
+
     printf("file_name =  %s\n", argv[1]);
     FILE* file = fopen(argv[1], "r");
     if(!file) {
@@ -585,19 +595,20 @@ int main(int argc, char* argv[]){
                 break;
         }
     }
-    printf("%i\n", tree.height());
-    printf("complete\n");
 
-    /*
-    for (int i = 0; i < 10; i ++) {
-        int r = rand() % 100;
-        printf("Inserting %i\n", r);
-        tree.insert(r);
-    }
+    //===============TIMER=====================
+    // end timer
+    clock_gettime(CLOCK_REALTIME, &t_end);
+    // calculate time elapsed
+    t_diff = BILLION * (t_end.tv_sec - t_start.tv_sec) + t_end.tv_nsec - t_start.tv_nsec;
+    // convert from nanoseconds to seconds
+    sec_diff = (double)t_diff / BILLION;
+    printf("elapsed time = %.5f seconds\n", sec_diff);
+    //===============TIMER=====================
 
-    tree.inspect(tree.root);
-    tree.delete_key(49);
-    */
+
+    //printf("%i\n", tree.height());
+    //printf("complete\n");
 }
 
 

@@ -8,7 +8,9 @@ Reference: CLRS, 2009
 #include <cstddef>
 #include <assert.h>
 #include <stdlib.h>
+#include <time.h>
 #define MAX(a,b) (((a)>(b))?(a):(b))
+#define BILLION 1000000000L
 
 struct Node{
     int key;
@@ -432,6 +434,14 @@ int main(int argc, char* argv[]){
     SplayTree tree;
     tree.set_verbose(false);
 
+    //===============TIMER=====================
+    uint64_t t_diff;
+    double sec_diff;
+    struct timespec t_start, t_end;
+    // start timer
+    clock_gettime(CLOCK_REALTIME, &t_start);
+    //===============TIMER=====================
+
     printf("file_name =  %s\n", argv[1]);
     FILE* file = fopen(argv[1], "r");
     if(!file) {
@@ -460,91 +470,19 @@ int main(int argc, char* argv[]){
                 break;
         }
     }
-    printf("%i\n", tree.height());
-    printf("complete\n");
 
-    /*
+    //===============TIMER=====================
+    // end timer
+    clock_gettime(CLOCK_REALTIME, &t_end);
+    // calculate time elapsed
+    t_diff = BILLION * (t_end.tv_sec - t_start.tv_sec) + t_end.tv_nsec - t_start.tv_nsec;
+    // convert from nanoseconds to seconds
+    sec_diff = (double)t_diff / BILLION;
+    printf("elapsed time = %.5f seconds\n", sec_diff);
+    //===============TIMER=====================
 
-    for (int i = 0; i < 10; i ++) {
-        int r = rand() % 1000;
-        printf("Inserting %i\n", r);
-        tree.insert(r);
-    }
-    
-    tree.inspect(tree.root);
-    tree.search(272);
-    tree.inspect(tree.root);
-    tree.search(878);
-    tree.inspect(tree.root);
-    tree.search(658);//right-right
-    tree.inspect(tree.root);
-    tree.search(807);//right-left
-    tree.inspect(tree.root);
-    tree.search(249);//left-left
-    tree.inspect(tree.root);
-    tree.search(544);//left-right
-    tree.inspect(tree.root);
-    tree.search(658);//right
-    tree.inspect(tree.root);
-    tree.search(544);//left
-    tree.inspect(tree.root);
-    tree.deleteKey(272);
-    tree.inspect(tree.root);
-    tree.deleteKey(923);
-    printf("complente?\n");
-    tree.inspect(tree.root);
-    
-    
-    
-    for (int i = 0; i < 10; i ++) {
-        int r = rand() % 100;
-        printf("Inserting %i\n", r);
-        tree.insert(r);
-    }
-
-    tree.inspect(tree.root);
-    printf("-----\n");
-    tree.deleteKey(23);
-    tree.inspect(tree.root);
-    
-    
-    
-    
-    int n = 10;
-    int nums[n];
-    for (int i = 0; i < n; i ++) {
-        int r = rand() % (n*10);
-        nums[i] = r;
-        //printf("Inserting %i\n", r);
-        tree.insert(r);
-    }
-    printf("height: %i\n", tree.height());
-    for (int i = 0; i < n; i ++) {
-        int r = rand() % n;
-        tree.search(r);
-    }
-    printf("height: %i\n", tree.height());
-    
-
-    
-
-    for (int i = 0; i < 10000; i ++) {
-        int r = rand() % 10000000;
-        //int r = i;
-        tree.insert(r);
-        //printf("Inserting %i\n", r);
-    }
-
-    printf("%i\n", tree.height());
-
-    for (int i = 0; i < 100; i ++) {
-        int r = rand() % 10000000;
-        //int r = i;
-        tree.search(r);
-        //printf("Searching %i\n", r);
-    }
-    printf("%i\n", tree.height());
-    */
+    //printf("%i\n", tree.height());
+    //printf("complete\n");
     
 }
 

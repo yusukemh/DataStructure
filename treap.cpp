@@ -13,7 +13,8 @@ Reference: CLRS, 2009
 #include <random>
 #include <iostream>
 #define MAX(a,b) (((a)>(b))?(a):(b))
-#define MAX_KEY_VALUE 2147483647
+//#define MAX_KEY_VALUE 2147483647
+#define BILLION 1000000000L
 
 struct Node{
     int key;
@@ -484,12 +485,15 @@ class Treap {
 int main(int argc, char* argv[]){
     Treap tree;
     tree.set_verbose(false);
-    tree.root = nullptr;
+    //tree.root = nullptr;
 
-    // for(int i =0; i < 10; i ++ ){
-    //     tree.insert(rand() % 100);
-    // } 
-    // return 0;
+    //===============TIMER=====================
+    uint64_t t_diff;
+    double sec_diff;
+    struct timespec t_start, t_end;
+    // start timer
+    clock_gettime(CLOCK_REALTIME, &t_start);
+    //===============TIMER=====================
     
     printf("file_name =  %s\n", argv[1]);
     FILE* file = fopen(argv[1], "r");
@@ -519,27 +523,20 @@ int main(int argc, char* argv[]){
                 break;
         }
     }
-    printf("complete\n");
-    //tree.inspect(tree.root);
-    printf("tree height %i\n", tree.height());
-    
-    /*
-    for (int i = 0; i < 100; i ++) {
-        int r = rand() % 10;
-        printf("Inserting %i\n", r);
-        tree.insert(r);
-    }
 
-    
-    for (int i = 0; i < 100; i ++) {
-        int r = rand() % 10;
-        printf("Deleting %i\n", r);
-        tree.delete_key(r);
-    }
-    */
+    //===============TIMER=====================
+    // end timer
+    clock_gettime(CLOCK_REALTIME, &t_end);
+    // calculate time elapsed
+    t_diff = BILLION * (t_end.tv_sec - t_start.tv_sec) + t_end.tv_nsec - t_start.tv_nsec;
+    // convert from nanoseconds to seconds
+    sec_diff = (double)t_diff / BILLION;
+    printf("elapsed time = %.5f seconds\n", sec_diff);
+    //===============TIMER=====================
 
-    
-    
+
+    //printf("complete\n");
+    //printf("tree height %i\n", tree.height());
 
 }
 
