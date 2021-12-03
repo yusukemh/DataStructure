@@ -24,7 +24,7 @@ if False:
                         runtimes += float(runtime)
                 # print(f"Avg: {runtimes / 25}")
                 print("AVG: {:.5f}".format(runtimes/25))
-if False:
+if True:
     # Run Analysis on ["ST-1-U", "ST-1-N"]
     SET_TYPES = ["ST-1-U", "ST-1-N"]
     NUM_OPERATIONS = ["100000", "500000", "1000000", "5000000", "10000000"]
@@ -41,7 +41,7 @@ if False:
                         runtimes += float(runtime)
                 # print(f"Avg: {runtimes / 25}")
                 print("AVG: {:.5f}".format(runtimes/25))
-if True:
+if False:
     # Run analysis on "H"
     set_type = "H"
     NUM_OPERATIONS = ["1000", "5000", "10000", "50000", "100000"]

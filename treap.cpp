@@ -506,7 +506,7 @@ int main(int argc, char* argv[]){
 
     int height;
     int max_height = 0;
-    bool height_analysis = true;
+    bool height_analysis = false;
     while(fgets(line, sizeof(line), file)) {
         //printf("line: %s", line);
         str_num = &line[2];
@@ -514,22 +514,22 @@ int main(int argc, char* argv[]){
         switch(line[0]) {
             case 'i':
                 tree.insert(num);
-                height = tree.height();
                 if(height_analysis && height > max_height) {
+                    height = tree.height();
                     max_height = height;
                 }
                 break;
             case 'd':
                 tree.delete_key(num);
-                height = tree.height();
                 if(height_analysis && height > max_height) {
+                    height = tree.height();
                     max_height = height;
                 }
                 break;
             case 's':
                 tree.search(num);
-                height = tree.height();
                 if(height_analysis && height > max_height) {
+                    height = tree.height();
                     max_height = height;
                 }
                 break;
