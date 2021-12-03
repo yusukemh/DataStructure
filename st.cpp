@@ -451,22 +451,35 @@ int main(int argc, char* argv[]){
     char line[64];
     char* str_num;
     int num;
+
+    int height;
+    int max_height = 0;
+    bool height_analysis = true;
     while(fgets(line, sizeof(line), file)) {
         //printf("line: %s", line);
         str_num = &line[2];
         num = strtol(str_num, NULL, 10);
         switch(line[0]) {
             case 'i':
-                //printf("insert %i\n", num);
                 tree.insert(num);
+                height = tree.height();
+                if(height_analysis && height > max_height) {
+                    max_height = height;
+                }
                 break;
             case 'd':
-                //printf("delete %i\n", num);
                 tree.deleteKey(num);
+                height = tree.height();
+                if(height_analysis && height > max_height) {
+                    max_height = height;
+                }
                 break;
             case 's':
-                //printf("serach %i\n", num);
                 tree.search(num);
+                height = tree.height();
+                if(height_analysis && height > max_height) {
+                    max_height = height;
+                }
                 break;
         }
     }
@@ -479,10 +492,9 @@ int main(int argc, char* argv[]){
     // convert from nanoseconds to seconds
     sec_diff = (double)t_diff / BILLION;
     printf("elapsed time = %.5f seconds\n", sec_diff);
-    //===============TIMER=====================
+    if(height_analysis) printf("Max height achieved: %i\n", max_height);
+    return 0;
 
-    //printf("%i\n", tree.height());
-    //printf("complete\n");
     
 }
 
